@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#10162c">
+    <title>ESCAPE FROM THIRTIES</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
+      <section class="game-panel" aria-label="ゲーム画面">
+        <canvas id="gameCanvas" width="360" height="520"></canvas>
+        <div class="hud" aria-live="polite">
+          <div><span>SCORE</span><strong id="scoreLabel">0</strong></div>
+          <div><span>LIFE</span><strong id="lifeLabel">3</strong></div>
+          <div><span>BOOST</span><strong id="boostLabel">x1.0</strong></div>
+        </div>
+      </section>
+
+      <section id="titleScreen" class="screen title-screen">
+        <button id="storyButton" class="small-action" type="button">STORY</button>
+        <div class="title-logo">
+          <span class="eyebrow">MVP TEMP BUILD</span>
+          <h1>ESCAPE FROM THIRTIES</h1>
+          <p>古川未鈴30代からの脱出!!</p>
+        </div>
+        <button id="startButton" class="primary-action" type="button">START</button>
+      </section>
+
+      <section id="storyScreen" class="screen story-screen" hidden>
+        <header>
+          <h2>STORY</h2>
+          <button id="storyBackButton" class="small-action" type="button">BACK</button>
+        </header>
+        <article id="storyBody" class="story-body"></article>
+      </section>
+
+      <section id="resultScreen" class="screen result-screen" hidden>
+        <div class="result-box">
+          <p id="resultStatus" class="result-status">CLEAR</p>
+          <dl>
+            <div>
+              <dt>TOTAL SCORE</dt>
+              <dd id="resultScore">0</dd>
+            </div>
+            <div>
+              <dt>REMAINING LIFE</dt>
+              <dd id="resultLife">0</dd>
+            </div>
+            <div>
+              <dt>ITEMS</dt>
+              <dd id="resultItems">0</dd>
+            </div>
+          </dl>
+          <div class="result-actions">
+            <button id="retryButton" class="primary-action" type="button">RETRY</button>
+            <button id="titleButton" class="secondary-action" type="button">TITLE</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="操作ボタン">
+        <button id="jumpButton" class="control-button jump" type="button">JUMP</button>
+        <button id="boostButton" class="control-button boost" type="button">BOOST</button>
+      </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="assets.js"></script>
+    <script src="course.js"></script>
+    <script src="story.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
