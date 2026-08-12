@@ -425,6 +425,7 @@ function playBgm(key) {
 function setBoost(isHeld) {
   input.boostHeld = Boolean(isHeld && game.mode === "playing");
   boostButton.classList.toggle("is-held", input.boostHeld);
+  updateHud();
 }
 
 function bindHoldButton(button, callback) {
