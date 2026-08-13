@@ -7,14 +7,21 @@ const scoreLabel = document.getElementById("scoreLabel");
 const lifeLabel = document.getElementById("lifeLabel");
 const boostLabel = document.getElementById("boostLabel");
 const titleScreen = document.getElementById("titleScreen");
+const consoleScreen = document.getElementById("consoleScreen");
+const secretTitleScreen = document.getElementById("secretTitleScreen");
 const storyScreen = document.getElementById("storyScreen");
 const resultScreen = document.getElementById("resultScreen");
+const consoleDisplay = document.getElementById("consoleDisplay");
 const storyBody = document.getElementById("storyBody");
 const resultStatus = document.getElementById("resultStatus");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
 const resultItems = document.getElementById("resultItems");
 const startButton = document.getElementById("startButton");
+const secretStartButton = document.getElementById("secretStartButton");
+const normalModeButton = document.getElementById("normalModeButton");
+const consoleButton = document.getElementById("consoleButton");
+const consoleBackButton = document.getElementById("consoleBackButton");
 const storyButton = document.getElementById("storyButton");
 const storyBackButton = document.getElementById("storyBackButton");
 const retryButton = document.getElementById("retryButton");
@@ -30,8 +37,19 @@ const input = {
   boostHeld: false
 };
 
+const SECRET_COMMAND = ["UP", "UP", "DOWN", "DOWN", "A", "B", "A", "B"];
+const SECRET_SYMBOLS = {
+  UP: "↑",
+  DOWN: "↓",
+  LEFT: "←",
+  RIGHT: "→",
+  A: "A",
+  B: "B"
+};
+
 const game = {
   mode: "title",
+  playMode: "normal",
   lastTime: 0,
   progress: 0,
   score: 0,
@@ -53,6 +71,8 @@ const game = {
   items: []
 };
 
+let consoleHistory = [];
+
 storyBody.textContent = STORY_TEXT;
 resizeCanvas();
 resetGame();
@@ -65,11 +85,21 @@ window.addEventListener("keyup", onKeyUp);
 window.addEventListener("blur", () => setBoost(false));
 document.addEventListener("contextmenu", (event) => event.preventDefault());
 
-startButton.addEventListener("click", startGame);
-retryButton.addEventListener("click", startGame);
-titleButton.addEventListener("click", showTitle);
+startButton.addEventListener("click", () => startGame("normal"));
+secretStartButton.addEventListener("click", () => startGame("secret"));
+normalModeButton.addEventListener("click", showTitle);
+consoleButton.addEventListener("click", showConsole);
+consoleBackButton.addEventListener("click", showTitle);
+retryButton.addEventListener("click", () => startGame(game.playMode));
+titleButton.addEventListener("click", showResultTitle);
 storyButton.addEventListener("click", showStory);
 storyBackButton.addEventListener("click", showTitle);
+document.querySelectorAll("[data-console-input]").forEach((button) => {
+  button.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    pressConsoleButton(button.dataset.consoleInput);
+  });
+});
 jumpButton.addEventListener("pointerdown", (event) => {
   event.preventDefault();
   jump();
@@ -131,12 +161,14 @@ function createAudioStore(manifest) {
   }
 
   Object.entries(manifest.se || {}).forEach(([key, path]) => {
+    if (!path) return;
     const sound = new Audio(path);
     sound.preload = "auto";
     store.sounds.set(key, sound);
   });
 
   Object.entries(manifest.bgm || {}).forEach(([key, path]) => {
+    if (!path) return;
     const music = new Audio(path);
     music.preload = "auto";
     music.loop = true;
@@ -148,6 +180,7 @@ function createAudioStore(manifest) {
 
 function collectPaths(value, paths) {
   if (typeof value === "string") {
+    if (!value) return;
     paths.push(value);
     return;
   }
@@ -167,6 +200,61 @@ function getImage(path) {
   return record && record.loaded ? record.image : null;
 }
 
+function getModeSettings(mode = game.playMode) {
+  const normal = {
+    key: "normal",
+    title: "ESCAPE FROM THIRTIES",
+    courseLength: cfg.courseLength,
+    baseSpeed: cfg.baseSpeed,
+    boostSpeed: cfg.boostSpeed,
+    boostScoreMultiplier: cfg.boostScoreMultiplier,
+    itemScoreAffectedByBoost: cfg.itemScoreAffectedByBoost,
+    gravity: cfg.gravity,
+    jumpVelocity: cfg.jumpVelocity,
+    jumpCutVelocity: cfg.jumpCutVelocity,
+    maxLife: cfg.maxLife,
+    invincibleMs: cfg.invincibleMs,
+    cancelBoostOnDamage: cfg.cancelBoostOnDamage,
+    backgroundKey: "normal",
+    backgroundFallbackKey: "main",
+    titleBgmKey: "title",
+    playBgmKey: "play",
+    bgmFallback: {
+      title: "title",
+      play: "play"
+    },
+    finishLabel: cfg.finishLabel
+  };
+
+  if (mode === "secret") {
+    return { ...normal, ...cfg.secretMode, key: "secret" };
+  }
+
+  return normal;
+}
+
+function getCourseData(mode = game.playMode) {
+  if (mode === "secret") {
+    return {
+      obstacles: SECRET_COURSE_OBSTACLES,
+      items: SECRET_COURSE_ITEMS
+    };
+  }
+
+  return {
+    obstacles: COURSE_OBSTACLES,
+    items: COURSE_ITEMS
+  };
+}
+
+function hideScreens() {
+  titleScreen.hidden = true;
+  consoleScreen.hidden = true;
+  secretTitleScreen.hidden = true;
+  storyScreen.hidden = true;
+  resultScreen.hidden = true;
+}
+
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   const ratio = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
@@ -183,13 +271,15 @@ function resizeCanvas() {
 }
 
 function resetGame() {
+  const settings = getModeSettings();
+  const course = getCourseData();
   game.progress = 0;
   game.score = 0;
   game.itemScore = 0;
   game.runScore = 0;
   game.lifeBonus = 0;
   game.itemsCollected = 0;
-  game.life = cfg.maxLife;
+  game.life = settings.maxLife;
   game.invincibleTimer = 0;
   game.resultWasClear = false;
   game.player.x = cfg.playerX;
@@ -197,42 +287,62 @@ function resetGame() {
   game.player.vy = 0;
   game.player.grounded = true;
   game.player.damageFlash = 0;
-  game.obstacles = COURSE_OBSTACLES.map((obstacle) => ({ ...obstacle, hit: false }));
-  game.items = COURSE_ITEMS.map((item) => ({ ...item, collected: false, pop: 0 }));
+  game.obstacles = course.obstacles.map((obstacle) => ({ ...obstacle, hit: false }));
+  game.items = course.items.map((item) => ({ ...item, collected: false, pop: 0 }));
   setBoost(false);
   updateHud();
 }
 
 function showTitle() {
   game.mode = "title";
+  game.playMode = "normal";
   setBoost(false);
+  hideScreens();
   titleScreen.hidden = false;
-  storyScreen.hidden = true;
-  resultScreen.hidden = true;
   playBgm("title");
+}
+
+function showConsole() {
+  game.mode = "console";
+  consoleHistory = [];
+  setBoost(false);
+  hideScreens();
+  consoleDisplay.textContent = "READY";
+  consoleScreen.hidden = false;
+  playBgm("title");
+}
+
+function showSecretTitle() {
+  const settings = getModeSettings("secret");
+  game.mode = "secretTitle";
+  game.playMode = "secret";
+  setBoost(false);
+  hideScreens();
+  secretTitleScreen.hidden = false;
+  playBgm(settings.titleBgmKey, settings.bgmFallback.title);
 }
 
 function showStory() {
   game.mode = "story";
-  titleScreen.hidden = true;
+  hideScreens();
   storyScreen.hidden = false;
-  resultScreen.hidden = true;
   storyBody.scrollTop = 0;
   playBgm("title");
 }
 
-function startGame() {
+function startGame(playMode = "normal") {
+  game.playMode = playMode;
+  const settings = getModeSettings();
   resetGame();
   game.mode = "playing";
   game.lastTime = performance.now();
-  titleScreen.hidden = true;
-  storyScreen.hidden = true;
-  resultScreen.hidden = true;
+  hideScreens();
   playSound("start");
-  playBgm("play");
+  playBgm(settings.playBgmKey, settings.bgmFallback.play);
 }
 
 function showResult(clear) {
+  const settings = getModeSettings();
   game.mode = "result";
   setBoost(false);
   game.resultWasClear = clear;
@@ -242,19 +352,28 @@ function showResult(clear) {
     game.score += game.lifeBonus;
   }
 
-  resultStatus.textContent = clear ? "ESCAPED" : "GAME OVER";
+  resultStatus.textContent = clear ? (game.playMode === "secret" ? "B DASH CLEAR" : "ESCAPED") : "GAME OVER";
   resultStatus.style.color = clear ? "#7cf7c1" : "#ff8da8";
   resultScore.textContent = Math.floor(game.score).toString();
   resultLife.textContent = game.life.toString();
   resultItems.textContent = game.itemsCollected.toString();
+  titleButton.textContent = game.playMode === "secret" ? "SECRET TITLE" : "TITLE";
+  hideScreens();
   resultScreen.hidden = false;
-  titleScreen.hidden = true;
-  storyScreen.hidden = true;
   if (clear) {
     playSound("goal");
   }
-  playBgm("title");
+  playBgm(settings.titleBgmKey, settings.bgmFallback.title);
   updateHud();
+}
+
+function showResultTitle() {
+  if (game.playMode === "secret") {
+    showSecretTitle();
+    return;
+  }
+
+  showTitle();
 }
 
 function loop(time) {
@@ -270,9 +389,10 @@ function loop(time) {
 }
 
 function update(delta) {
+  const settings = getModeSettings();
   const boosted = input.boostHeld;
-  const speed = boosted ? cfg.boostSpeed : cfg.baseSpeed;
-  const scoreMultiplier = boosted ? cfg.boostScoreMultiplier : 1;
+  const speed = boosted ? settings.boostSpeed : settings.baseSpeed;
+  const scoreMultiplier = boosted ? settings.boostScoreMultiplier : 1;
   const advance = speed * delta;
 
   game.progress += advance;
@@ -292,7 +412,7 @@ function update(delta) {
     game.invincibleTimer = Math.max(0, game.invincibleTimer - delta * 1000);
   }
 
-  if (game.progress >= cfg.courseLength) {
+  if (game.progress >= settings.courseLength) {
     showResult(true);
   }
 
@@ -300,8 +420,9 @@ function update(delta) {
 }
 
 function updatePlayer(delta) {
+  const settings = getModeSettings();
   const player = game.player;
-  player.vy += cfg.gravity * delta;
+  player.vy += settings.gravity * delta;
   player.y += player.vy * delta;
 
   const floorY = cfg.groundY - cfg.player.height;
@@ -319,6 +440,7 @@ function updatePlayer(delta) {
 }
 
 function updateItems() {
+  const settings = getModeSettings();
   game.items.forEach((item) => {
     if (item.collected) {
       if (item.pop > 0) item.pop -= 1;
@@ -330,7 +452,7 @@ function updateItems() {
       item.collected = true;
       item.pop = 18;
       game.itemsCollected += 1;
-      const multiplier = input.boostHeld && cfg.itemScoreAffectedByBoost ? cfg.boostScoreMultiplier : 1;
+      const multiplier = input.boostHeld && settings.itemScoreAffectedByBoost ? settings.boostScoreMultiplier : 1;
       const gained = item.scoreValue * multiplier;
       game.itemScore += gained;
       game.score += gained;
@@ -354,10 +476,11 @@ function updateCollisions() {
 }
 
 function damagePlayer() {
+  const settings = getModeSettings();
   game.life = Math.max(0, game.life - 1);
-  game.invincibleTimer = cfg.invincibleMs;
-  game.player.damageFlash = cfg.invincibleMs / 1000;
-  if (cfg.cancelBoostOnDamage) {
+  game.invincibleTimer = settings.invincibleMs;
+  game.player.damageFlash = settings.invincibleMs / 1000;
+  if (settings.cancelBoostOnDamage) {
     setBoost(false);
   }
 
@@ -367,17 +490,19 @@ function damagePlayer() {
 }
 
 function jump() {
+  const settings = getModeSettings();
   if (game.mode !== "playing") return;
   if (!game.player.grounded) return;
-  game.player.vy = cfg.jumpVelocity;
+  game.player.vy = settings.jumpVelocity;
   game.player.grounded = false;
   playSound("jump");
 }
 
 function endJump() {
+  const settings = getModeSettings();
   if (game.mode !== "playing") return;
-  if (game.player.vy < cfg.jumpCutVelocity) {
-    game.player.vy = cfg.jumpCutVelocity;
+  if (game.player.vy < settings.jumpCutVelocity) {
+    game.player.vy = settings.jumpCutVelocity;
   }
 }
 
@@ -397,20 +522,21 @@ function playSound(key) {
   }
 }
 
-function playBgm(key) {
+function playBgm(key, fallbackKey) {
   if (!audio.enabled) return;
-  if (audio.currentBgm === key) return;
+  const music = audio.bgm.get(key) || (fallbackKey ? audio.bgm.get(fallbackKey) : null);
+  const activeKey = audio.bgm.get(key) ? key : fallbackKey;
+  if (!music) return;
+  if (audio.currentBgm === activeKey) return;
 
   audio.bgm.forEach((music, musicKey) => {
-    if (musicKey !== key) {
+    if (musicKey !== activeKey) {
       music.pause();
       music.currentTime = 0;
     }
   });
 
-  const music = audio.bgm.get(key);
-  audio.currentBgm = key;
-  if (!music) return;
+  audio.currentBgm = activeKey;
 
   try {
     const promise = music.play();
@@ -419,6 +545,30 @@ function playBgm(key) {
     }
   } catch (error) {
     // Browser autoplay policy or missing files can be ignored in the MVP.
+  }
+}
+
+function pressConsoleButton(value) {
+  if (game.mode !== "console") return;
+
+  consoleHistory.push(value);
+  if (consoleHistory.length > SECRET_COMMAND.length) {
+    consoleHistory.shift();
+  }
+
+  const isPrefix = consoleHistory.every((inputValue, index) => inputValue === SECRET_COMMAND[index]);
+  if (!isPrefix) {
+    consoleHistory = [];
+    consoleDisplay.textContent = "....";
+    return;
+  }
+
+  consoleDisplay.textContent = consoleHistory.map((inputValue) => SECRET_SYMBOLS[inputValue]).join(" ");
+
+  if (consoleHistory.length === SECRET_COMMAND.length) {
+    consoleDisplay.textContent = cfg.secretMode.title;
+    game.mode = "consoleSuccess";
+    window.setTimeout(showSecretTitle, 650);
   }
 }
 
@@ -445,6 +595,23 @@ function bindHoldButton(button, callback) {
 }
 
 function onKeyDown(event) {
+  if (game.mode === "console") {
+    const keyMap = {
+      ArrowUp: "UP",
+      ArrowDown: "DOWN",
+      ArrowLeft: "LEFT",
+      ArrowRight: "RIGHT",
+      KeyA: "A",
+      KeyB: "B"
+    };
+    const value = keyMap[event.code];
+    if (value) {
+      event.preventDefault();
+      pressConsoleButton(value);
+      return;
+    }
+  }
+
   if (event.code === "Space") {
     event.preventDefault();
     if (event.repeat) return;
@@ -470,9 +637,10 @@ function onKeyUp(event) {
 }
 
 function updateHud() {
+  const settings = getModeSettings();
   scoreLabel.textContent = Math.floor(game.score).toString();
   lifeLabel.textContent = game.life.toString();
-  boostLabel.textContent = input.boostHeld ? `x${cfg.boostScoreMultiplier.toFixed(1)}` : "x1.0";
+  boostLabel.textContent = input.boostHeld ? `x${settings.boostScoreMultiplier.toFixed(1)}` : "x1.0";
 }
 
 function getPlayerHitbox() {
@@ -541,8 +709,10 @@ function draw(time) {
 }
 
 function drawBackground(time) {
-  const bgPath = ASSET_MANIFEST.background.main;
-  const bg = getImage(bgPath);
+  const settings = getModeSettings();
+  const bgPath = ASSET_MANIFEST.background[settings.backgroundKey];
+  const fallbackPath = ASSET_MANIFEST.background[settings.backgroundFallbackKey] || ASSET_MANIFEST.background.normal || ASSET_MANIFEST.background.main;
+  const bg = getImage(bgPath) || getImage(fallbackPath);
   if (bg) {
     drawLoopingBackground(bg);
   } else {
@@ -584,17 +754,18 @@ function drawLoopingBackground(bg) {
 }
 
 function drawCourseProgress() {
+  const settings = getModeSettings();
   const barX = 20;
   const barY = cfg.canvasHeight - 24;
   const barW = cfg.canvasWidth - 40;
-  const ratio = Math.min(1, game.progress / cfg.courseLength);
+  const ratio = Math.min(1, game.progress / settings.courseLength);
   ctx.fillStyle = "#1b2a4d";
   ctx.fillRect(barX, barY, barW, 8);
   ctx.fillStyle = "#7cf7c1";
   ctx.fillRect(barX, barY, barW * ratio, 8);
   ctx.fillStyle = "#f7fbff";
   ctx.font = "10px Trebuchet MS";
-  ctx.fillText(cfg.finishLabel, barX + barW - 48, barY - 4);
+  ctx.fillText(settings.finishLabel, barX + barW - 48, barY - 4);
 }
 
 function drawPlayer(time) {
