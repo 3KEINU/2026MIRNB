@@ -137,12 +137,12 @@ button {
 }
 
 .title-screen > .console-open {
-  position: absolute;
-  z-index: 8;
-  left: 16px;
+  position: fixed;
+  z-index: 20;
+  left: calc((100vw - min(100vw, 480px)) / 2 + 28px);
   right: auto;
   top: auto;
-  bottom: 16px;
+  bottom: max(92px, calc(env(safe-area-inset-bottom) + 72px));
   width: auto;
   max-width: 34vw;
   min-height: 34px;
