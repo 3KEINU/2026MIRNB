@@ -23,6 +23,7 @@ const normalModeButton = document.getElementById("normalModeButton");
 const consoleButton = document.getElementById("consoleButton");
 const consoleBackButton = document.getElementById("consoleBackButton");
 const storyButton = document.getElementById("storyButton");
+const secretStoryButton = document.getElementById("secretStoryButton");
 const storyBackButton = document.getElementById("storyBackButton");
 const retryButton = document.getElementById("retryButton");
 const titleButton = document.getElementById("titleButton");
@@ -50,6 +51,7 @@ const SECRET_SYMBOLS = {
 const game = {
   mode: "title",
   playMode: "normal",
+  storyReturnMode: "normal",
   lastTime: 0,
   progress: 0,
   score: 0,
@@ -101,7 +103,8 @@ consoleBackButton.addEventListener("click", showTitle);
 retryButton.addEventListener("click", () => startGame(game.playMode));
 titleButton.addEventListener("click", showResultTitle);
 storyButton.addEventListener("click", showStory);
-storyBackButton.addEventListener("click", showTitle);
+secretStoryButton.addEventListener("click", () => showStory("secret"));
+storyBackButton.addEventListener("click", showStoryBack);
 document.querySelectorAll("[data-console-input]").forEach((button) => {
   button.addEventListener("pointerdown", (event) => {
     event.preventDefault();
@@ -342,12 +345,28 @@ function showSecretTitle() {
   playBgm(settings.titleBgmKey, settings.bgmFallback.title);
 }
 
-function showStory() {
+function showStory(storyMode = "normal") {
   game.mode = "story";
+  game.storyReturnMode = storyMode;
+  storyBody.textContent = storyMode === "secret" ? SECRET_STORY_TEXT : STORY_TEXT;
   hideScreens();
   storyScreen.hidden = false;
   storyBody.scrollTop = 0;
+  if (storyMode === "secret") {
+    const settings = getModeSettings("secret");
+    playBgm(settings.titleBgmKey, settings.bgmFallback.title);
+    return;
+  }
   playBgm("title");
+}
+
+function showStoryBack() {
+  if (game.storyReturnMode === "secret") {
+    showSecretTitle();
+    return;
+  }
+
+  showTitle();
 }
 
 function startGame(playMode = "normal") {
