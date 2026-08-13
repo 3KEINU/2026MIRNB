@@ -88,7 +88,10 @@ document.addEventListener("contextmenu", (event) => event.preventDefault());
 startButton.addEventListener("click", () => startGame("normal"));
 secretStartButton.addEventListener("click", () => startGame("secret"));
 normalModeButton.addEventListener("click", showTitle);
-consoleButton.addEventListener("click", showConsole);
+consoleButton.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  showConsole();
+});
 consoleBackButton.addEventListener("click", showTitle);
 retryButton.addEventListener("click", () => startGame(game.playMode));
 titleButton.addEventListener("click", showResultTitle);
