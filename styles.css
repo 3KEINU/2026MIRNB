@@ -136,18 +136,26 @@ button {
   right: 12px;
 }
 
-.console-open {
+.title-screen > .console-open {
   position: absolute;
-  left: 12px;
-  bottom: 12px;
-  min-height: 36px;
-  padding: 7px 11px;
-  border: 2px solid rgba(124, 247, 193, 0.72);
+  z-index: 8;
+  left: 16px;
+  right: auto;
+  top: auto;
+  bottom: 16px;
+  width: auto;
+  max-width: 34vw;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 2px solid rgba(124, 247, 193, 0.44);
   border-radius: 6px;
-  background: #18233e;
-  color: #b6ffe2;
+  background: rgba(7, 16, 31, 0.72);
+  color: rgba(182, 255, 226, 0.86);
   cursor: pointer;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
+  line-height: 1;
+  touch-action: manipulation;
+  pointer-events: auto;
 }
 
 .title-logo {
