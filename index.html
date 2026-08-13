@@ -5,7 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
     <meta name="theme-color" content="#10162c">
     <title>ESCAPE FROM THIRTIES</title>
-    <link rel="stylesheet" href="styles.css">
+    <script>
+      (function () {
+        function setAppHeight() {
+          var viewport = window.visualViewport;
+          var height = viewport ? viewport.height : window.innerHeight;
+          if (!height) return;
+          document.documentElement.style.setProperty("--app-height", Math.floor(height) + "px");
+        }
+        setAppHeight();
+        window.addEventListener("resize", setAppHeight);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", setAppHeight);
+          window.visualViewport.addEventListener("scroll", setAppHeight);
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css?v=20260813-viewport">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -96,10 +112,10 @@
       </section>
     </main>
 
-    <script src="config.js"></script>
-    <script src="assets.js"></script>
-    <script src="course.js"></script>
-    <script src="story.js"></script>
-    <script src="main.js"></script>
+    <script src="config.js?v=20260813-viewport"></script>
+    <script src="assets.js?v=20260813-viewport"></script>
+    <script src="course.js?v=20260813-viewport"></script>
+    <script src="story.js?v=20260813-viewport"></script>
+    <script src="main.js?v=20260813-viewport"></script>
   </body>
 </html>
