@@ -29,15 +29,18 @@ button {
 }
 
 .app {
-  position: relative;
-  width: min(100vw, 480px);
-  height: 100dvh;
-  min-height: 560px;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: 480px;
+  height: 100svh;
+  min-height: 0;
   margin: 0 auto;
-  padding: max(10px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  padding: max(8px, env(safe-area-inset-top)) 10px max(8px, env(safe-area-inset-bottom));
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(168px, 32vh);
-  gap: 10px;
+  grid-template-rows: minmax(0, 1fr) clamp(112px, 22svh, 152px);
+  gap: 8px;
+  overflow: hidden;
   background: #11172c;
   border-inline: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -137,12 +140,12 @@ button {
 }
 
 .title-screen > .console-open {
-  position: fixed;
+  position: absolute;
   z-index: 20;
-  left: calc((100vw - min(100vw, 480px)) / 2 + 28px);
+  left: 14px;
   right: auto;
   top: auto;
-  bottom: max(92px, calc(env(safe-area-inset-bottom) + 72px));
+  bottom: 14px;
   width: auto;
   max-width: 34vw;
   min-height: 34px;
@@ -418,7 +421,7 @@ dd {
   width: 100%;
   min-width: 0;
   height: 100%;
-  min-height: 136px;
+  min-height: 0;
   border: 4px solid #f7fbff;
   border-radius: 8px;
   cursor: pointer;
@@ -449,13 +452,12 @@ dd {
 
 @media (max-height: 640px) {
   .app {
-    min-height: 500px;
-    grid-template-rows: minmax(0, 1fr) minmax(140px, 30vh);
+    grid-template-rows: minmax(0, 1fr) clamp(96px, 20svh, 128px);
     gap: 8px;
   }
 
   .control-button {
-    min-height: 112px;
+    min-height: 0;
   }
 
   .title-screen {
