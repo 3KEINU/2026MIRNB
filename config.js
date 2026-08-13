@@ -44,6 +44,30 @@ const GAME_CONFIG = {
     scrollFactor: 0.35
   },
 
+  secretMode: {
+    title: "みりんのハートにBダッシュ",
+    courseLength: 12000,
+    baseSpeed: 245,
+    boostSpeed: 430,
+    boostScoreMultiplier: 2,
+    itemScoreAffectedByBoost: true,
+    gravity: 950,
+    jumpVelocity: -590,
+    jumpCutVelocity: -260,
+    maxLife: 1,
+    invincibleMs: 0,
+    cancelBoostOnDamage: true,
+    backgroundKey: "secret",
+    backgroundFallbackKey: "normal",
+    titleBgmKey: "titleSecret",
+    playBgmKey: "playSecret",
+    bgmFallback: {
+      title: "title",
+      play: "play"
+    },
+    finishLabel: "HEART"
+  },
+
   itemSize: 26,
   finishLabel: "ESCAPE",
   placeholderLabel: "TEMP"

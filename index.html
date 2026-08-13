@@ -20,12 +20,42 @@
 
       <section id="titleScreen" class="screen title-screen">
         <button id="storyButton" class="small-action" type="button">STORY</button>
+        <button id="consoleButton" class="console-open" type="button">CONSOLE</button>
         <div class="title-logo">
           <span class="eyebrow">MVP TEMP BUILD</span>
           <h1>ESCAPE FROM THIRTIES</h1>
           <p>古川未鈴30代からの脱出!!</p>
         </div>
         <button id="startButton" class="primary-action" type="button">START</button>
+      </section>
+
+      <section id="consoleScreen" class="screen console-screen" hidden>
+        <header>
+          <h2>CONSOLE</h2>
+          <button id="consoleBackButton" class="small-action" type="button">BACK</button>
+        </header>
+        <div class="console-device">
+          <div id="consoleDisplay" class="console-display">READY</div>
+          <div class="console-pad" aria-label="console input">
+            <button data-console-input="UP" class="pad-button up" type="button">UP</button>
+            <button data-console-input="LEFT" class="pad-button left" type="button">LEFT</button>
+            <button data-console-input="RIGHT" class="pad-button right" type="button">RIGHT</button>
+            <button data-console-input="DOWN" class="pad-button down" type="button">DOWN</button>
+          </div>
+          <div class="console-actions" aria-label="console action buttons">
+            <button data-console-input="B" class="round-button b-button" type="button">B</button>
+            <button data-console-input="A" class="round-button a-button" type="button">A</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="secretTitleScreen" class="screen title-screen secret-title-screen" hidden>
+        <div class="title-logo">
+          <span class="eyebrow">SECRET MODE</span>
+          <h1>みりんのハートにBダッシュ</h1>
+        </div>
+        <button id="secretStartButton" class="primary-action" type="button">START</button>
+        <button id="normalModeButton" class="secondary-action" type="button">NORMAL MODE</button>
       </section>
 
       <section id="storyScreen" class="screen story-screen" hidden>

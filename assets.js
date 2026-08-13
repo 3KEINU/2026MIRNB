@@ -25,6 +25,8 @@ const ASSET_MANIFEST = {
     zine: "assets/items/zine.png"
   },
   background: {
+    normal: "assets/background/main.png",
+    secret: "",
     main: "assets/background/main.png"
   },
   audio: {
@@ -35,7 +37,9 @@ const ASSET_MANIFEST = {
     },
     bgm: {
       title: "assets/audio/bgm/title_loop.mp3",
-      play: "assets/audio/bgm/play_loop.mp3"
+      play: "assets/audio/bgm/play_loop.mp3",
+      titleSecret: "",
+      playSecret: ""
     }
   },
   ui: {}

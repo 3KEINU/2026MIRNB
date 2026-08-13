@@ -136,6 +136,20 @@ button {
   right: 12px;
 }
 
+.console-open {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 2px solid rgba(124, 247, 193, 0.72);
+  border-radius: 6px;
+  background: #18233e;
+  color: #b6ffe2;
+  cursor: pointer;
+  font-size: 0.76rem;
+}
+
 .title-logo {
   width: 100%;
 }
@@ -193,6 +207,11 @@ h1 {
   gap: 12px;
 }
 
+.console-screen {
+  padding: 16px;
+  gap: 16px;
+}
+
 .story-screen header {
   display: flex;
   align-items: center;
@@ -203,6 +222,114 @@ h1 {
 
 .story-screen h2 {
   font-size: 1.4rem;
+}
+
+.console-screen header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.console-screen h2 {
+  font-size: 1.4rem;
+}
+
+.console-device {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(78px, 0.35fr) minmax(190px, 1fr);
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 16px;
+  border: 3px solid #dbe9ff;
+  border-radius: 8px;
+  background: #07101f;
+}
+
+.console-display {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  border: 2px solid #7cf7c1;
+  border-radius: 6px;
+  background: #12233a;
+  color: #7cf7c1;
+  font-size: clamp(1rem, 5vw, 1.35rem);
+  text-align: center;
+}
+
+.console-pad {
+  position: relative;
+  min-height: 190px;
+}
+
+.pad-button,
+.round-button {
+  position: absolute;
+  border: 3px solid #f7fbff;
+  border-radius: 8px;
+  background: #27395d;
+  color: #f7fbff;
+  cursor: pointer;
+  font-weight: 800;
+  touch-action: none;
+}
+
+.pad-button {
+  width: 72px;
+  height: 54px;
+  font-size: 0.78rem;
+}
+
+.pad-button.up {
+  top: 8px;
+  left: calc(50% - 36px);
+}
+
+.pad-button.left {
+  top: 72px;
+  left: calc(50% - 112px);
+}
+
+.pad-button.right {
+  top: 72px;
+  left: calc(50% + 40px);
+}
+
+.pad-button.down {
+  top: 136px;
+  left: calc(50% - 36px);
+}
+
+.console-actions {
+  position: relative;
+  min-height: 190px;
+}
+
+.round-button {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+}
+
+.b-button {
+  left: calc(50% - 78px);
+  top: 84px;
+  background: #2466c9;
+}
+
+.a-button {
+  left: calc(50% + 8px);
+  top: 42px;
+  background: #d5335c;
+}
+
+.secret-title-screen h1 {
+  font-size: clamp(1.9rem, 10vw, 3rem);
+  line-height: 1.06;
 }
 
 .story-body {
