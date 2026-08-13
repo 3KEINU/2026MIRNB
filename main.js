@@ -74,12 +74,17 @@ const game = {
 let consoleHistory = [];
 
 storyBody.textContent = STORY_TEXT;
+syncAppHeight();
 resizeCanvas();
 resetGame();
 showTitle();
 requestAnimationFrame(loop);
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", syncLayout);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", syncLayout);
+  window.visualViewport.addEventListener("scroll", syncLayout);
+}
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 window.addEventListener("blur", () => setBoost(false));
@@ -248,6 +253,18 @@ function getCourseData(mode = game.playMode) {
     obstacles: COURSE_OBSTACLES,
     items: COURSE_ITEMS
   };
+}
+
+function syncLayout() {
+  syncAppHeight();
+  resizeCanvas();
+}
+
+function syncAppHeight() {
+  const viewport = window.visualViewport;
+  const height = viewport ? viewport.height : window.innerHeight;
+  if (!height) return;
+  document.documentElement.style.setProperty("--app-height", `${Math.floor(height)}px`);
 }
 
 function hideScreens() {
