@@ -818,7 +818,8 @@ function drawPlayer(time) {
   } else if (!player.grounded) {
     path = player.vy < 0 ? ASSET_MANIFEST.player.jumpUp[0] : ASSET_MANIFEST.player.jumpDown[0];
   } else {
-    const frame = Math.floor(time / (1000 / cfg.player.animationFps)) % ASSET_MANIFEST.player.run.length;
+    const animationFps = input.boostHeld ? cfg.player.boostAnimationFps : cfg.player.animationFps;
+    const frame = Math.floor(time / (1000 / animationFps)) % ASSET_MANIFEST.player.run.length;
     path = ASSET_MANIFEST.player.run[frame];
   }
 
