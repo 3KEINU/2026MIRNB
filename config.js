@@ -36,6 +36,7 @@ const GAME_CONFIG = {
       height: 58
     },
     animationFps: 8,
+    boostAnimationFps: 12,
     runFrames: 2
   },
 
