@@ -816,7 +816,7 @@ function drawPlayer(time) {
   if (isDamaged) {
     path = ASSET_MANIFEST.player.damage[0];
   } else if (!player.grounded) {
-    path = ASSET_MANIFEST.player.jump[0];
+    path = player.vy < 0 ? ASSET_MANIFEST.player.jumpUp[0] : ASSET_MANIFEST.player.jumpDown[0];
   } else {
     const frame = Math.floor(time / (1000 / cfg.player.animationFps)) % ASSET_MANIFEST.player.run.length;
     path = ASSET_MANIFEST.player.run[frame];
