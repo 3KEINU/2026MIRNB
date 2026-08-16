@@ -28,15 +28,15 @@ const GAME_CONFIG = {
 
   player: {
     width: 48,
-    height: 56,
+    height: 80,
     hitbox: {
-      offsetX: 10,
-      offsetY: 8,
-      width: 28,
-      height: 46
+      offsetX: 13,
+      offsetY: 18,
+      width: 24,
+      height: 58
     },
     animationFps: 8,
-    runFrames: 4
+    runFrames: 2
   },
 
   background: {

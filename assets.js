@@ -6,12 +6,11 @@ const ASSET_MANIFEST = {
     frameHeight: 56,
     run: [
       "assets/player/run_1.png",
-      "assets/player/run_2.png",
-      "assets/player/run_3.png",
-      "assets/player/run_4.png"
+      "assets/player/run_2.png"
     ],
-    jump: ["assets/player/jump.png"],
-    damage: ["assets/player/damage.png"]
+    jumpUp: ["assets/player/jump_up.png"],
+    jumpDown: ["assets/player/jump_down.png"],
+    damage: ["assets/player/jump_down.png"]
   },
   obstacles: {
     crt: "assets/obstacles/crt.png",
