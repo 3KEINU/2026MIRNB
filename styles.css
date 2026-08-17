@@ -1,11 +1,18 @@
 :root {
   --app-height: 100dvh;
   --control-height: clamp(96px, calc(var(--app-height) * 0.2), 144px);
+  --game-font: "BestTenDOT", "Trebuchet MS", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   color-scheme: dark;
-  font-family: "Trebuchet MS", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-family: var(--game-font);
   background: #07101f;
   color: #f7fbff;
   letter-spacing: 0;
+}
+
+@font-face {
+  font-family: "BestTenDOT";
+  src: url("assets/fonts/BestTen-DOT.otf") format("opentype");
+  font-display: swap;
 }
 
 * {
