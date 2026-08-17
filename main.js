@@ -749,11 +749,17 @@ function draw(time) {
 
 function drawBackground(time) {
   const settings = getModeSettings();
+  const basePath = ASSET_MANIFEST.background.base;
   const bgPath = ASSET_MANIFEST.background[settings.backgroundKey];
   const fallbackPath = ASSET_MANIFEST.background[settings.backgroundFallbackKey] || ASSET_MANIFEST.background.normal || ASSET_MANIFEST.background.main;
+  const base = getImage(basePath);
   const bg = getImage(bgPath) || getImage(fallbackPath);
-  if (bg) {
-    drawLoopingBackground(bg);
+  const ground = getImage(ASSET_MANIFEST.background.ground);
+
+  if (base) {
+    ctx.drawImage(base, 0, 0, cfg.canvasWidth, cfg.canvasHeight);
+  } else if (bg) {
+    drawLoopingBackground(bg, cfg.background.scrollFactor);
   } else {
     ctx.fillStyle = "#07101f";
     ctx.fillRect(0, 0, cfg.canvasWidth, cfg.canvasHeight);
@@ -771,13 +777,17 @@ function drawBackground(time) {
     }
   }
 
-  ctx.fillStyle = input.boostHeld ? "#dd385f" : "#245dcc";
-  ctx.fillRect(0, cfg.groundY, cfg.canvasWidth, 8);
-  ctx.fillStyle = "#0b0f1d";
-  ctx.fillRect(0, cfg.groundY + 8, cfg.canvasWidth, cfg.canvasHeight - cfg.groundY - 8);
+  if (ground) {
+    drawLoopingStrip(ground, cfg.groundY, ground.height, cfg.background.groundScrollFactor);
+  } else {
+    ctx.fillStyle = input.boostHeld ? "#dd385f" : "#245dcc";
+    ctx.fillRect(0, cfg.groundY, cfg.canvasWidth, 8);
+    ctx.fillStyle = "#0b0f1d";
+    ctx.fillRect(0, cfg.groundY + 8, cfg.canvasWidth, cfg.canvasHeight - cfg.groundY - 8);
+  }
 }
 
-function drawLoopingBackground(bg) {
+function drawLoopingBackground(bg, scrollFactor) {
   if (!cfg.background.loop) {
     ctx.drawImage(bg, 0, 0, cfg.canvasWidth, cfg.canvasHeight);
     return;
@@ -785,10 +795,19 @@ function drawLoopingBackground(bg) {
 
   const scale = cfg.canvasHeight / bg.height;
   const width = Math.max(1, bg.width * scale);
-  const offset = -((game.progress * cfg.background.scrollFactor) % width);
+  const offset = -((game.progress * scrollFactor) % width);
 
   for (let x = offset; x < cfg.canvasWidth; x += width) {
     ctx.drawImage(bg, x, 0, width, cfg.canvasHeight);
+  }
+}
+
+function drawLoopingStrip(image, y, height, scrollFactor) {
+  const width = Math.max(1, image.width);
+  const offset = -((game.progress * scrollFactor) % width);
+
+  for (let x = offset; x < cfg.canvasWidth; x += width) {
+    ctx.drawImage(image, x, y, width, height);
   }
 }
 
