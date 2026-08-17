@@ -42,7 +42,8 @@ const GAME_CONFIG = {
 
   background: {
     loop: true,
-    scrollFactor: 0.35
+    scrollFactor: 0.35,
+    groundScrollFactor: 1
   },
 
   secretMode: {

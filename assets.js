@@ -24,6 +24,8 @@ const ASSET_MANIFEST = {
     zine: "assets/items/zine.png"
   },
   background: {
+    base: "assets/background/background_base.png",
+    ground: "assets/background/ground_loop.png",
     normal: "assets/background/main.png",
     secret: "",
     main: "assets/background/main.png"
