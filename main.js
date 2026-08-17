@@ -822,7 +822,7 @@ function drawCourseProgress() {
   ctx.fillStyle = "#7cf7c1";
   ctx.fillRect(barX, barY, barW * ratio, 8);
   ctx.fillStyle = "#f7fbff";
-  ctx.font = "10px Trebuchet MS";
+  ctx.font = `10px ${cfg.fontFamily}`;
   ctx.fillText(settings.finishLabel, barX + barW - 48, barY - 4);
 }
 
@@ -859,7 +859,7 @@ function drawPlaceholderPlayer(x, y, width, height, grounded, damaged) {
   ctx.fillRect(x + 8, y + height - 16, 12, 16);
   ctx.fillRect(x + width - 20, y + height - 16, 12, 16);
   ctx.fillStyle = "#07101f";
-  ctx.font = "9px Trebuchet MS";
+  ctx.font = `9px ${cfg.fontFamily}`;
   ctx.fillText(cfg.placeholderLabel, x + 7, y + 34);
 }
 
@@ -885,7 +885,7 @@ function drawPlaceholderObstacle(rect, label) {
   ctx.lineWidth = 2;
   ctx.strokeRect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2);
   ctx.fillStyle = "#f7fbff";
-  ctx.font = "8px Trebuchet MS";
+  ctx.font = `8px ${cfg.fontFamily}`;
   ctx.fillText(label.toUpperCase(), rect.x + 4, rect.y + Math.max(13, rect.height / 2));
 }
 
@@ -898,7 +898,7 @@ function drawItems() {
       if (item.pop > 0) {
         ctx.globalAlpha = item.pop / 18;
         ctx.fillStyle = "#7cf7c1";
-        ctx.font = "14px Trebuchet MS";
+        ctx.font = `14px ${cfg.fontFamily}`;
         ctx.fillText(`+${item.scoreValue}`, rect.x, rect.y - (18 - item.pop));
         ctx.globalAlpha = 1;
       }
@@ -925,7 +925,7 @@ function drawPlaceholderItem(rect, label) {
   ctx.closePath();
   ctx.fill();
   ctx.fillStyle = "#07101f";
-  ctx.font = "8px Trebuchet MS";
+  ctx.font = `8px ${cfg.fontFamily}`;
   ctx.fillText(label.slice(0, 4).toUpperCase(), rect.x + 3, rect.y + 16);
 }
 
@@ -933,7 +933,7 @@ function drawAttractScene(time) {
   const pulse = 0.5 + Math.sin(time / 350) * 0.5;
   ctx.globalAlpha = 0.25 + pulse * 0.15;
   ctx.fillStyle = "#f7fbff";
-  ctx.font = "18px Trebuchet MS";
+  ctx.font = `18px ${cfg.fontFamily}`;
   ctx.fillText("TEMP CANVAS PREVIEW", 68, 252);
   ctx.globalAlpha = 1;
 }

@@ -3,6 +3,7 @@
 const GAME_CONFIG = {
   canvasWidth: 360,
   canvasHeight: 520,
+  fontFamily: "BestTenDOT, Trebuchet MS, sans-serif",
   groundY: 430,
   playerX: 72,
   courseLength: 12000,
