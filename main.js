@@ -45,6 +45,8 @@ const canvasView = {
   offsetY: 0
 };
 
+const scratchCanvases = new Map();
+
 const SECRET_COMMAND = ["UP", "UP", "DOWN", "DOWN", "A", "B", "A", "B"];
 const SECRET_SYMBOLS = {
   UP: "↑",
@@ -840,6 +842,8 @@ function drawBackground(time) {
     }
   }
 
+  drawParallaxWindows();
+
   if (ground) {
     drawLoopingStrip(ground, cfg.groundY, ground.height, cfg.background.groundScrollFactor);
   } else {
@@ -848,6 +852,144 @@ function drawBackground(time) {
     ctx.fillStyle = "#0b0f1d";
     ctx.fillRect(0, cfg.groundY + 8, cfg.canvasWidth, cfg.canvasHeight - cfg.groundY - 8);
   }
+}
+
+function drawParallaxWindows() {
+  const windowConfig = cfg.background.windows;
+  if (!windowConfig || !windowConfig.enabled) return;
+
+  const far = getImage(ASSET_MANIFEST.background.windowFar);
+  if (!far) return;
+
+  const loopWidth = Math.max(cfg.canvasWidth, windowConfig.loopWidth || cfg.canvasWidth);
+  const travel = (game.progress * windowConfig.scrollFactor) % loopWidth;
+
+  for (let repeat = -1; repeat <= 1; repeat += 1) {
+    windowConfig.entries.forEach((entry) => {
+      const x = entry.x + repeat * loopWidth - travel;
+      if (x + entry.width < -8 || x > cfg.canvasWidth + 8) return;
+      drawParallaxWindow(entry, x, far);
+    });
+  }
+}
+
+function drawParallaxWindow(entry, x, far) {
+  const y = entry.y;
+  const width = entry.width;
+  const height = entry.height;
+  const mask = getImage(ASSET_MANIFEST.background.windowMask);
+
+  if (mask) {
+    drawMaskedWindowInterior(entry, x, far, mask);
+  } else {
+    drawEllipseWindowInterior(entry, x, far);
+  }
+
+  const framePath = ASSET_MANIFEST.background.windowFrames[entry.frame];
+  const frame = getImage(framePath);
+  if (frame) {
+    ctx.drawImage(frame, x, y, width, height);
+  } else {
+    ctx.strokeStyle = entry.tint;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, width, height);
+  }
+}
+
+function drawMaskedWindowInterior(entry, x, far, mask) {
+  const y = entry.y;
+  const width = entry.width;
+  const height = entry.height;
+  const scratch = getScratchCanvas(width, height);
+  const buffer = scratch.canvas;
+  const bufferCtx = scratch.context;
+
+  bufferCtx.setTransform(1, 0, 0, 1, 0, 0);
+  bufferCtx.clearRect(0, 0, width, height);
+  drawWindowFarLayerInto(bufferCtx, far, x, y);
+  bufferCtx.globalCompositeOperation = "source-over";
+  bufferCtx.fillStyle = colorWithAlpha(entry.tint, cfg.background.windows.tintAlpha);
+  bufferCtx.fillRect(0, 0, width, height);
+  bufferCtx.globalCompositeOperation = "destination-in";
+  bufferCtx.drawImage(mask, 0, 0, width, height);
+  bufferCtx.globalCompositeOperation = "source-over";
+  ctx.drawImage(buffer, x, y, width, height);
+}
+
+function getScratchCanvas(width, height) {
+  const key = `${width}x${height}`;
+  let scratch = scratchCanvases.get(key);
+
+  if (!scratch) {
+    const canvasElement = document.createElement("canvas");
+    canvasElement.width = width;
+    canvasElement.height = height;
+    scratch = {
+      canvas: canvasElement,
+      context: canvasElement.getContext("2d")
+    };
+    scratchCanvases.set(key, scratch);
+  }
+
+  return scratch;
+}
+
+function drawEllipseWindowInterior(entry, x, far) {
+  const y = entry.y;
+  const width = entry.width;
+  const height = entry.height;
+  const insetX = 10;
+  const insetY = 7;
+  const clipX = x + insetX;
+  const clipY = y + insetY;
+  const clipW = Math.max(1, width - insetX * 2);
+  const clipH = Math.max(1, height - insetY * 2);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(
+    clipX + clipW / 2,
+    clipY + clipH / 2,
+    clipW / 2,
+    clipH / 2,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.clip();
+  drawWindowFarLayer(far, cfg.background.windows.farScrollFactor);
+  ctx.fillStyle = colorWithAlpha(entry.tint, cfg.background.windows.tintAlpha);
+  ctx.fillRect(x, y, width, height);
+  ctx.restore();
+}
+
+function drawWindowFarLayer(image, scrollFactor) {
+  const scale = cfg.canvasHeight / image.height;
+  const width = Math.max(1, image.width * scale);
+  const offset = -((game.progress * scrollFactor) % width);
+
+  for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
+    ctx.drawImage(image, x, 0, width, cfg.canvasHeight);
+  }
+}
+
+function drawWindowFarLayerInto(targetCtx, image, targetX, targetY) {
+  const scale = cfg.canvasHeight / image.height;
+  const width = Math.max(1, image.width * scale);
+  const offset = -((game.progress * cfg.background.windows.farScrollFactor) % width);
+
+  for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
+    targetCtx.drawImage(image, x - targetX, -targetY, width, cfg.canvasHeight);
+  }
+}
+
+function colorWithAlpha(hex, alpha) {
+  const value = hex.replace("#", "");
+  if (value.length !== 6) return hex;
+  const red = parseInt(value.slice(0, 2), 16);
+  const green = parseInt(value.slice(2, 4), 16);
+  const blue = parseInt(value.slice(4, 6), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
 function drawLoopingBackground(bg, scrollFactor) {
