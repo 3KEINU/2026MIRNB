@@ -1,5 +1,6 @@
 :root {
   --app-height: 100dvh;
+  --app-width: min(100vw, 480px);
   --control-height: clamp(96px, calc(var(--app-height) * 0.2), 144px);
   --game-font: "BestTenDOT", "Trebuchet MS", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   color-scheme: dark;
@@ -46,7 +47,7 @@ button {
   right: auto;
   bottom: auto;
   transform: translateX(-50%);
-  width: min(100vw, 480px);
+  width: var(--app-width);
   height: var(--app-height);
   max-height: var(--app-height);
   min-height: 0;
