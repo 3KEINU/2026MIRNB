@@ -48,7 +48,32 @@ const GAME_CONFIG = {
   background: {
     loop: true,
     scrollFactor: 0.35,
-    groundScrollFactor: 1
+    groundScrollFactor: 1,
+    windows: {
+      enabled: true,
+      scrollFactor: 0.72,
+      farScrollFactor: 0.16,
+      loopWidth: 760,
+      tintAlpha: 0.22,
+      entries: [
+        {
+          frame: "blue",
+          x: 380,
+          y: 150,
+          width: 120,
+          height: 150,
+          tint: "#3aa6ff"
+        },
+        {
+          frame: "pink",
+          x: 690,
+          y: 185,
+          width: 120,
+          height: 150,
+          tint: "#ff5cc8"
+        }
+      ]
+    }
   },
 
   secretMode: {

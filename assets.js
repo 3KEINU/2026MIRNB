@@ -26,6 +26,12 @@ const ASSET_MANIFEST = {
   background: {
     base: "assets/background/background_base.png",
     ground: "assets/background/ground_loop.png",
+    windowFar: "assets/background/window_far_loop.png",
+    windowMask: "assets/background/window_mask.png",
+    windowFrames: {
+      blue: "assets/background/window_frame_blue.png",
+      pink: "assets/background/window_frame_pink.png"
+    },
     normal: "assets/background/main.png",
     secret: "",
     main: "assets/background/main.png"
