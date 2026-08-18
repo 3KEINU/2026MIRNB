@@ -38,6 +38,13 @@ const input = {
   boostHeld: false
 };
 
+const canvasView = {
+  preserveAspect: true,
+  scale: 1,
+  offsetX: 0,
+  offsetY: 0
+};
+
 const SECRET_COMMAND = ["UP", "UP", "DOWN", "DOWN", "A", "B", "A", "B"];
 const SECRET_SYMBOLS = {
   UP: "↑",
@@ -266,8 +273,24 @@ function syncLayout() {
 function syncAppHeight() {
   const viewport = window.visualViewport;
   const height = viewport ? viewport.height : window.innerHeight;
+  const width = viewport ? viewport.width : window.innerWidth;
   if (!height) return;
+  const controlHeight = clamp(height * 0.2, 96, 144);
+  const gameHeight = Math.max(1, height - controlHeight - 24);
+  const maxAppWidth = (cfg.layout && cfg.layout.maxAppWidth) || 900;
+  const appWidth = isCanvasAspectPreserved()
+    ? Math.min(width || 480, (gameHeight * cfg.canvasWidth / cfg.canvasHeight) + 20, maxAppWidth)
+    : Math.min(width || 480, 480);
   document.documentElement.style.setProperty("--app-height", `${Math.floor(height)}px`);
+  document.documentElement.style.setProperty("--app-width", `${Math.floor(appWidth)}px`);
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function isCanvasAspectPreserved() {
+  return !cfg.layout || cfg.layout.preserveCanvasAspect !== false;
 }
 
 function hideScreens() {
@@ -283,13 +306,33 @@ function resizeCanvas() {
   const ratio = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
   canvas.width = Math.floor(rect.width * ratio);
   canvas.height = Math.floor(rect.height * ratio);
-  ctx.setTransform(
+  canvasView.preserveAspect = isCanvasAspectPreserved();
+
+  if (!canvasView.preserveAspect) {
+    ctx.setTransform(
+      canvas.width / cfg.canvasWidth,
+      0,
+      0,
+      canvas.height / cfg.canvasHeight,
+      0,
+      0
+    );
+    return;
+  }
+
+  canvasView.scale = Math.min(
     canvas.width / cfg.canvasWidth,
+    canvas.height / cfg.canvasHeight
+  );
+  canvasView.offsetX = Math.floor((canvas.width - cfg.canvasWidth * canvasView.scale) / 2);
+  canvasView.offsetY = Math.floor((canvas.height - cfg.canvasHeight * canvasView.scale) / 2);
+  ctx.setTransform(
+    canvasView.scale,
     0,
     0,
-    canvas.height / cfg.canvasHeight,
-    0,
-    0
+    canvasView.scale,
+    canvasView.offsetX,
+    canvasView.offsetY
   );
 }
 
@@ -735,7 +778,7 @@ function isOverlapping(a, b) {
 }
 
 function draw(time) {
-  ctx.clearRect(0, 0, cfg.canvasWidth, cfg.canvasHeight);
+  beginCanvasFrame();
   drawBackground(time);
   drawCourseProgress();
   drawItems();
@@ -745,6 +788,26 @@ function draw(time) {
   if (game.mode === "title") {
     drawAttractScene(time);
   }
+}
+
+function beginCanvasFrame() {
+  if (!canvasView.preserveAspect) {
+    ctx.clearRect(0, 0, cfg.canvasWidth, cfg.canvasHeight);
+    return;
+  }
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#07101f";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(
+    canvasView.scale,
+    0,
+    0,
+    canvasView.scale,
+    canvasView.offsetX,
+    canvasView.offsetY
+  );
 }
 
 function drawBackground(time) {

@@ -7,21 +7,30 @@
     <title>ESCAPE FROM THIRTIES</title>
     <script>
       (function () {
-        function setAppHeight() {
+        function clamp(value, min, max) {
+          return Math.min(max, Math.max(min, value));
+        }
+
+        function setAppLayout() {
           var viewport = window.visualViewport;
           var height = viewport ? viewport.height : window.innerHeight;
+          var width = viewport ? viewport.width : window.innerWidth;
           if (!height) return;
+          var controlHeight = clamp(height * 0.2, 96, 144);
+          var gameHeight = Math.max(1, height - controlHeight - 24);
+          var appWidth = Math.min(width || 480, (gameHeight * 360 / 520) + 20, 900);
           document.documentElement.style.setProperty("--app-height", Math.floor(height) + "px");
+          document.documentElement.style.setProperty("--app-width", Math.floor(appWidth) + "px");
         }
-        setAppHeight();
-        window.addEventListener("resize", setAppHeight);
+        setAppLayout();
+        window.addEventListener("resize", setAppLayout);
         if (window.visualViewport) {
-          window.visualViewport.addEventListener("resize", setAppHeight);
-          window.visualViewport.addEventListener("scroll", setAppHeight);
+          window.visualViewport.addEventListener("resize", setAppLayout);
+          window.visualViewport.addEventListener("scroll", setAppLayout);
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260818-square">
+    <link rel="stylesheet" href="styles.css?v=20260818-aspect">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -113,10 +122,10 @@
       </section>
     </main>
 
-    <script src="config.js?v=20260817-font"></script>
+    <script src="config.js?v=20260818-aspect"></script>
     <script src="assets.js?v=20260817-font"></script>
     <script src="course.js?v=20260817-font"></script>
     <script src="story.js?v=20260817-font"></script>
-    <script src="main.js?v=20260817-font"></script>
+    <script src="main.js?v=20260818-aspect"></script>
   </body>
 </html>
