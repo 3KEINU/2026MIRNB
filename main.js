@@ -29,6 +29,8 @@ const retryButton = document.getElementById("retryButton");
 const titleButton = document.getElementById("titleButton");
 const jumpButton = document.getElementById("jumpButton");
 const boostButton = document.getElementById("boostButton");
+const consoleDevice = document.querySelector(".console-device");
+const consoleArtboard = document.querySelector(".console-artboard");
 
 const cfg = GAME_CONFIG;
 const assets = createAssetStore(ASSET_MANIFEST);
@@ -270,6 +272,7 @@ function getCourseData(mode = game.playMode) {
 function syncLayout() {
   syncAppHeight();
   resizeCanvas();
+  syncConsoleArtboard();
 }
 
 function syncAppHeight() {
@@ -285,6 +288,19 @@ function syncAppHeight() {
     : Math.min(width || 480, 480);
   document.documentElement.style.setProperty("--app-height", `${Math.floor(height)}px`);
   document.documentElement.style.setProperty("--app-width", `${Math.floor(appWidth)}px`);
+}
+
+function syncConsoleArtboard() {
+  if (!consoleDevice || !consoleArtboard || consoleScreen.hidden) return;
+
+  const rect = consoleDevice.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const scale = Math.min(rect.width / 360, rect.height / 520);
+  const width = Math.floor(360 * scale);
+  const height = Math.floor(520 * scale);
+  consoleArtboard.style.width = `${width}px`;
+  consoleArtboard.style.height = `${height}px`;
 }
 
 function clamp(value, min, max) {
@@ -377,6 +393,7 @@ function showConsole() {
   hideScreens();
   consoleDisplay.textContent = "> COMMAND?";
   consoleScreen.hidden = false;
+  requestAnimationFrame(syncConsoleArtboard);
   playBgm("title");
 }
 
