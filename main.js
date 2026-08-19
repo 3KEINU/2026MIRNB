@@ -391,6 +391,7 @@ function showConsole() {
   consoleHistory = [];
   setBoost(false);
   hideScreens();
+  consoleDisplay.classList.remove("is-command-input");
   consoleDisplay.textContent = "> COMMAND?";
   consoleScreen.hidden = false;
   requestAnimationFrame(syncConsoleArtboard);
@@ -660,13 +661,16 @@ function pressConsoleButton(value) {
   const isPrefix = consoleHistory.every((inputValue, index) => inputValue === SECRET_COMMAND[index]);
   if (!isPrefix) {
     consoleHistory = [];
+    consoleDisplay.classList.remove("is-command-input");
     consoleDisplay.textContent = "....";
     return;
   }
 
-  consoleDisplay.textContent = consoleHistory.map((inputValue) => SECRET_SYMBOLS[inputValue]).join(" ");
+  consoleDisplay.classList.add("is-command-input");
+  consoleDisplay.textContent = consoleHistory.map((inputValue) => SECRET_SYMBOLS[inputValue]).join("");
 
   if (consoleHistory.length === SECRET_COMMAND.length) {
+    consoleDisplay.classList.remove("is-command-input");
     consoleDisplay.textContent = cfg.secretMode.title;
     game.mode = "consoleSuccess";
     window.setTimeout(showSecretTitle, 650);

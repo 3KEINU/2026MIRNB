@@ -307,11 +307,16 @@ h1 {
   border-radius: 0;
   background: #111c2c;
   color: #7cf7c1;
-  font-size: clamp(0.9rem, 5vw, 1.35rem);
+  font-size: clamp(0.84rem, 4.4vw, 1.2rem);
   line-height: 1.15;
   text-align: center;
+  white-space: nowrap;
   overflow: hidden;
   pointer-events: none;
+}
+
+.console-display.is-command-input {
+  font-size: clamp(0.72rem, 3.7vw, 1rem);
 }
 
 .console-hit {
