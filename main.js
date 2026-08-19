@@ -375,7 +375,7 @@ function showConsole() {
   consoleHistory = [];
   setBoost(false);
   hideScreens();
-  consoleDisplay.textContent = "READY";
+  consoleDisplay.textContent = "> COMMAND?";
   consoleScreen.hidden = false;
   playBgm("title");
 }
