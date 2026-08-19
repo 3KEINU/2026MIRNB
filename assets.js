@@ -49,5 +49,8 @@ const ASSET_MANIFEST = {
       playSecret: ""
     }
   },
-  ui: {}
+  ui: {
+    consoleBody: "assets/ui/console_body.png",
+    consoleScreenMask: "assets/ui/console_screen_mask.png"
+  }
 };

@@ -235,8 +235,8 @@ h1 {
 }
 
 .console-screen {
-  padding: 16px;
-  gap: 16px;
+  padding: 12px;
+  gap: 10px;
 }
 
 .story-screen header {
@@ -265,93 +265,109 @@ h1 {
 .console-device {
   flex: 1 1 auto;
   min-height: 0;
+  width: 100%;
   display: grid;
-  grid-template-rows: minmax(78px, 0.35fr) minmax(190px, 1fr);
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  padding: 16px;
-  border: 3px solid #dbe9ff;
-  border-radius: 0;
-  background: #07101f;
+  place-items: center;
+  overflow: hidden;
+}
+
+.console-artboard {
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  aspect-ratio: 360 / 520;
+  image-rendering: pixelated;
+}
+
+.console-body-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .console-display {
-  grid-column: 1 / -1;
+  position: absolute;
+  left: 12.7778%;
+  top: 8.4615%;
+  width: 74.1667%;
+  height: 35%;
   display: grid;
   place-items: center;
-  border: 2px solid #7cf7c1;
+  padding: 6px;
+  border: 0;
   border-radius: 0;
-  background: #12233a;
+  background: #111c2c;
   color: #7cf7c1;
-  font-size: clamp(1rem, 5vw, 1.35rem);
+  font-size: clamp(0.9rem, 5vw, 1.35rem);
+  line-height: 1.15;
   text-align: center;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.console-pad {
-  position: relative;
-  min-height: 190px;
-}
-
-.pad-button,
-.round-button {
+.console-hit {
   position: absolute;
-  border: 3px solid #f7fbff;
+  display: block;
+  padding: 0;
+  border: 0;
   border-radius: 0;
-  background: #27395d;
-  color: #f7fbff;
+  background: transparent;
+  color: transparent;
   cursor: pointer;
-  font-weight: 800;
   touch-action: none;
 }
 
-.pad-button {
-  width: 72px;
-  height: 54px;
-  font-size: 0.78rem;
+.console-hit:active {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.pad-button.up {
-  top: 8px;
-  left: calc(50% - 36px);
+.console-hit-up {
+  left: 16.9444%;
+  top: 61.1538%;
+  width: 15.5556%;
+  height: 10%;
 }
 
-.pad-button.left {
-  top: 72px;
-  left: calc(50% - 112px);
+.console-hit-left {
+  left: 9.1667%;
+  top: 66.5385%;
+  width: 14.4444%;
+  height: 10.7692%;
 }
 
-.pad-button.right {
-  top: 72px;
-  left: calc(50% + 40px);
+.console-hit-right {
+  left: 25.8333%;
+  top: 66.5385%;
+  width: 14.4444%;
+  height: 10.7692%;
 }
 
-.pad-button.down {
-  top: 136px;
-  left: calc(50% - 36px);
+.console-hit-down {
+  left: 16.9444%;
+  top: 72.6923%;
+  width: 15.5556%;
+  height: 10%;
 }
 
-.console-actions {
-  position: relative;
-  min-height: 190px;
+.console-hit-b {
+  left: 56.3889%;
+  top: 67.5%;
+  width: 16.6667%;
+  height: 11.5385%;
 }
 
-.round-button {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  font-size: 1.3rem;
-}
-
-.b-button {
-  left: calc(50% - 78px);
-  top: 84px;
-  background: #2466c9;
-}
-
-.a-button {
-  left: calc(50% + 8px);
-  top: 42px;
-  background: #d5335c;
+.console-hit-a {
+  left: 73.0556%;
+  top: 64.6154%;
+  width: 16.6667%;
+  height: 11.5385%;
 }
 
 .secret-title-screen h1 {
