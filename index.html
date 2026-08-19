@@ -30,7 +30,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260818-aspect">
+    <link rel="stylesheet" href="styles.css?v=20260819-console-display-grow1">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -60,16 +60,15 @@
           <button id="consoleBackButton" class="small-action" type="button">BACK</button>
         </header>
         <div class="console-device">
-          <div id="consoleDisplay" class="console-display">READY</div>
-          <div class="console-pad" aria-label="console input">
-            <button data-console-input="UP" class="pad-button up" type="button">UP</button>
-            <button data-console-input="LEFT" class="pad-button left" type="button">LEFT</button>
-            <button data-console-input="RIGHT" class="pad-button right" type="button">RIGHT</button>
-            <button data-console-input="DOWN" class="pad-button down" type="button">DOWN</button>
-          </div>
-          <div class="console-actions" aria-label="console action buttons">
-            <button data-console-input="B" class="round-button b-button" type="button">B</button>
-            <button data-console-input="A" class="round-button a-button" type="button">A</button>
+          <div class="console-artboard">
+            <img class="console-body-image" src="assets/ui/console_body.png" alt="" aria-hidden="true">
+            <div id="consoleDisplay" class="console-display">READY</div>
+            <button data-console-input="UP" class="console-hit console-hit-up" type="button" aria-label="UP"></button>
+            <button data-console-input="LEFT" class="console-hit console-hit-left" type="button" aria-label="LEFT"></button>
+            <button data-console-input="RIGHT" class="console-hit console-hit-right" type="button" aria-label="RIGHT"></button>
+            <button data-console-input="DOWN" class="console-hit console-hit-down" type="button" aria-label="DOWN"></button>
+            <button data-console-input="B" class="console-hit console-hit-b" type="button" aria-label="B"></button>
+            <button data-console-input="A" class="console-hit console-hit-a" type="button" aria-label="A"></button>
           </div>
         </div>
       </section>
@@ -123,7 +122,7 @@
     </main>
 
     <script src="config.js?v=20260818-window-parallax"></script>
-    <script src="assets.js?v=20260818-window-mask"></script>
+    <script src="assets.js?v=20260819-console-body"></script>
     <script src="course.js?v=20260817-font"></script>
     <script src="story.js?v=20260818-story-normal-2"></script>
     <script src="main.js?v=20260818-window-mask-3"></script>
