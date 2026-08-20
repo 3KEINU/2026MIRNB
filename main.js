@@ -662,7 +662,7 @@ function pressConsoleButton(value) {
   if (!isPrefix) {
     consoleHistory = [];
     consoleDisplay.classList.remove("is-command-input");
-    consoleDisplay.textContent = "....";
+    consoleDisplay.textContent = "*incorrect*";
     return;
   }
 
