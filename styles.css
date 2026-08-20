@@ -160,6 +160,10 @@ button {
   right: 12px;
 }
 
+.title-screen .credits-open {
+  top: 62px;
+}
+
 .title-screen > .console-open {
   position: absolute;
   z-index: 20;
@@ -234,7 +238,8 @@ h1 {
   box-shadow: 0 6px 0 #133f84;
 }
 
-.story-screen {
+.story-screen,
+.credits-screen {
   padding: 16px;
   gap: 12px;
 }
@@ -244,7 +249,8 @@ h1 {
   gap: 10px;
 }
 
-.story-screen header {
+.story-screen header,
+.credits-screen header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -252,8 +258,23 @@ h1 {
   flex: 0 0 auto;
 }
 
-.story-screen h2 {
+.story-screen h2,
+.credits-screen h2 {
   font-size: 1.4rem;
+}
+
+.credits-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  color: #f7fbff;
+  font-size: clamp(0.9rem, 4.4vw, 1.18rem);
+  line-height: 1.75;
+  text-align: center;
+  white-space: pre-line;
+  overflow: auto;
 }
 
 .console-screen header {
