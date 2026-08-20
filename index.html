@@ -45,7 +45,8 @@
       </section>
 
       <section id="titleScreen" class="screen title-screen">
-        <button id="storyButton" class="small-action" type="button">STORY</button>
+        <button id="storyButton" class="small-action story-open" type="button">STORY</button>
+        <button id="creditsButton" class="small-action credits-open" type="button">CREDITS</button>
         <button id="consoleButton" class="console-open" type="button">CONSOLE</button>
         <div class="title-logo">
           <span class="eyebrow">MVP TEMP BUILD</span>
@@ -92,6 +93,14 @@
         <article id="storyBody" class="story-body"></article>
       </section>
 
+      <section id="creditsScreen" class="screen credits-screen" hidden>
+        <header>
+          <h2>CREDITS</h2>
+          <button id="creditsBackButton" class="small-action" type="button">BACK</button>
+        </header>
+        <article id="creditsBody" class="credits-body"></article>
+      </section>
+
       <section id="resultScreen" class="screen result-screen" hidden>
         <div class="result-box">
           <p id="resultStatus" class="result-status">CLEAR</p>
@@ -126,6 +135,7 @@
     <script src="assets.js?v=20260819-console-body"></script>
     <script src="course.js?v=20260819-crt-size"></script>
     <script src="story.js?v=20260818-story-normal-2"></script>
-    <script src="main.js?v=20260820-console-incorrect"></script>
+    <script src="credits.js?v=20260821-credits-sama"></script>
+    <script src="main.js?v=20260821-credits"></script>
   </body>
 </html>

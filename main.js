@@ -9,9 +9,11 @@ const titleScreen = document.getElementById("titleScreen");
 const consoleScreen = document.getElementById("consoleScreen");
 const secretTitleScreen = document.getElementById("secretTitleScreen");
 const storyScreen = document.getElementById("storyScreen");
+const creditsScreen = document.getElementById("creditsScreen");
 const resultScreen = document.getElementById("resultScreen");
 const consoleDisplay = document.getElementById("consoleDisplay");
 const storyBody = document.getElementById("storyBody");
+const creditsBody = document.getElementById("creditsBody");
 const resultStatus = document.getElementById("resultStatus");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
@@ -22,8 +24,10 @@ const normalModeButton = document.getElementById("normalModeButton");
 const consoleButton = document.getElementById("consoleButton");
 const consoleBackButton = document.getElementById("consoleBackButton");
 const storyButton = document.getElementById("storyButton");
+const creditsButton = document.getElementById("creditsButton");
 const secretStoryButton = document.getElementById("secretStoryButton");
 const storyBackButton = document.getElementById("storyBackButton");
+const creditsBackButton = document.getElementById("creditsBackButton");
 const retryButton = document.getElementById("retryButton");
 const titleButton = document.getElementById("titleButton");
 const jumpButton = document.getElementById("jumpButton");
@@ -86,6 +90,7 @@ const game = {
 let consoleHistory = [];
 
 storyBody.textContent = STORY_TEXT;
+creditsBody.textContent = CREDITS_TEXT;
 syncAppHeight();
 resizeCanvas();
 resetGame();
@@ -113,8 +118,10 @@ consoleBackButton.addEventListener("click", showTitle);
 retryButton.addEventListener("click", () => startGame(game.playMode));
 titleButton.addEventListener("click", showResultTitle);
 storyButton.addEventListener("click", showStory);
+creditsButton.addEventListener("click", showCredits);
 secretStoryButton.addEventListener("click", () => showStory("secret"));
 storyBackButton.addEventListener("click", showStoryBack);
+creditsBackButton.addEventListener("click", showTitle);
 document.querySelectorAll("[data-console-input]").forEach((button) => {
   button.addEventListener("pointerdown", (event) => {
     event.preventDefault();
@@ -316,6 +323,7 @@ function hideScreens() {
   consoleScreen.hidden = true;
   secretTitleScreen.hidden = true;
   storyScreen.hidden = true;
+  creditsScreen.hidden = true;
   resultScreen.hidden = true;
 }
 
@@ -430,6 +438,16 @@ function showStoryBack() {
   }
 
   showTitle();
+}
+
+function showCredits() {
+  game.mode = "credits";
+  setBoost(false);
+  hideScreens();
+  creditsBody.textContent = CREDITS_TEXT;
+  creditsScreen.hidden = false;
+  creditsBody.scrollTop = 0;
+  playBgm("title");
 }
 
 function startGame(playMode = "normal") {
