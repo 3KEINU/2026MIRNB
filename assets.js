@@ -21,7 +21,8 @@ const ASSET_MANIFEST = {
   items: {
     game: "assets/items/game.png",
     mic: "assets/items/mic.png",
-    zine: "assets/items/zine.png"
+    zine: "assets/items/zine.png",
+    heart: "assets/items/heart.png"
   },
   background: {
     base: "assets/background/background_base.png",
