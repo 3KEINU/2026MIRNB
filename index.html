@@ -17,7 +17,8 @@
           var width = viewport ? viewport.width : window.innerWidth;
           if (!height) return;
           var controlHeight = clamp(height * 0.2, 96, 144);
-          var gameHeight = Math.max(1, height - controlHeight - 24);
+          var statusHeight = clamp(height * 0.055, 34, 44);
+          var gameHeight = Math.max(1, height - controlHeight - statusHeight - 32);
           var appWidth = Math.min(width || 480, (gameHeight * 360 / 520) + 20, 900);
           document.documentElement.style.setProperty("--app-height", Math.floor(height) + "px");
           document.documentElement.style.setProperty("--app-width", Math.floor(appWidth) + "px");
@@ -30,17 +31,17 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260819-console-command-fit">
+    <link rel="stylesheet" href="styles.css?v=20260820-bottom-status">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
       <section class="game-panel" aria-label="ゲーム画面">
         <canvas id="gameCanvas" width="360" height="520"></canvas>
-        <div class="hud" aria-live="polite">
-          <div><span>SCORE</span><strong id="scoreLabel">0</strong></div>
-          <div><span>LIFE</span><strong id="lifeLabel">3</strong></div>
-          <div><span>Bだっしゅ</span><strong id="boostLabel">x1.0</strong></div>
-        </div>
+      </section>
+
+      <section class="status-bar" aria-live="polite">
+        <div class="status-score"><span>SCORE</span><strong id="scoreLabel">0</strong></div>
+        <div class="status-life"><span>LIFE</span><strong id="lifeLabel">♥♥♥</strong></div>
       </section>
 
       <section id="titleScreen" class="screen title-screen">
@@ -125,6 +126,6 @@
     <script src="assets.js?v=20260819-console-body"></script>
     <script src="course.js?v=20260819-crt-size"></script>
     <script src="story.js?v=20260818-story-normal-2"></script>
-    <script src="main.js?v=20260819-console-command-fit"></script>
+    <script src="main.js?v=20260820-bottom-status"></script>
   </body>
 </html>

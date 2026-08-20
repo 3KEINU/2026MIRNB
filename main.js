@@ -5,7 +5,6 @@ const ctx = canvas.getContext("2d");
 
 const scoreLabel = document.getElementById("scoreLabel");
 const lifeLabel = document.getElementById("lifeLabel");
-const boostLabel = document.getElementById("boostLabel");
 const titleScreen = document.getElementById("titleScreen");
 const consoleScreen = document.getElementById("consoleScreen");
 const secretTitleScreen = document.getElementById("secretTitleScreen");
@@ -281,7 +280,8 @@ function syncAppHeight() {
   const width = viewport ? viewport.width : window.innerWidth;
   if (!height) return;
   const controlHeight = clamp(height * 0.2, 96, 144);
-  const gameHeight = Math.max(1, height - controlHeight - 24);
+  const statusHeight = clamp(height * 0.055, 34, 44);
+  const gameHeight = Math.max(1, height - controlHeight - statusHeight - 32);
   const maxAppWidth = (cfg.layout && cfg.layout.maxAppWidth) || 900;
   const appWidth = isCanvasAspectPreserved()
     ? Math.min(width || 480, (gameHeight * cfg.canvasWidth / cfg.canvasHeight) + 20, maxAppWidth)
@@ -744,8 +744,13 @@ function onKeyUp(event) {
 function updateHud() {
   const settings = getModeSettings();
   scoreLabel.textContent = Math.floor(game.score).toString();
-  lifeLabel.textContent = game.life.toString();
-  boostLabel.textContent = input.boostHeld ? `x${settings.boostScoreMultiplier.toFixed(1)}` : "x1.0";
+  lifeLabel.textContent = getLifeHearts(game.life, settings.maxLife);
+}
+
+function getLifeHearts(life, maxLife) {
+  const total = Math.max(1, maxLife);
+  const current = clamp(life, 0, total);
+  return "♥".repeat(current) + "♡".repeat(total - current);
 }
 
 function getPlayerHitbox() {
