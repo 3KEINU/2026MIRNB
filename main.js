@@ -241,6 +241,7 @@ function getModeSettings(mode = game.playMode) {
     jumpVelocity: cfg.jumpVelocity,
     jumpCutVelocity: cfg.jumpCutVelocity,
     maxLife: cfg.maxLife,
+    lifeCap: cfg.maxLife,
     invincibleMs: cfg.invincibleMs,
     cancelBoostOnDamage: cfg.cancelBoostOnDamage,
     backgroundKey: "normal",
@@ -571,11 +572,20 @@ function updateItems() {
     if (isOverlapping(getPlayerHitbox(), itemRect)) {
       item.collected = true;
       item.pop = 18;
+      if (item.effect === "life") {
+        const nextLife = Math.min(settings.lifeCap, game.life + 1);
+        item.popText = nextLife > game.life ? "+♥" : "";
+        game.life = nextLife;
+        updateHud();
+        return;
+      }
+
       game.itemsCollected += 1;
       const multiplier = input.boostHeld && settings.itemScoreAffectedByBoost ? settings.boostScoreMultiplier : 1;
       const gained = item.scoreValue * multiplier;
       game.itemScore += gained;
       game.score += gained;
+      item.popText = `+${gained}`;
     }
   });
 }
@@ -762,7 +772,7 @@ function onKeyUp(event) {
 function updateHud() {
   const settings = getModeSettings();
   scoreLabel.textContent = Math.floor(game.score).toString();
-  lifeLabel.textContent = getLifeHearts(game.life, settings.maxLife);
+  lifeLabel.textContent = getLifeHearts(game.life, settings.lifeCap);
 }
 
 function getLifeHearts(life, maxLife) {
@@ -1077,7 +1087,7 @@ function drawCourseProgress() {
 
 function drawPlayer(time) {
   const player = game.player;
-  const isDamaged = game.invincibleTimer > 0;
+  const isDamaged = game.invincibleTimer > 0 || player.damageFlash > 0;
   if (isDamaged && Math.floor(time / 90) % 2 === 0) return;
 
   let path = null;
@@ -1144,11 +1154,11 @@ function drawItems() {
     if (rect.x + rect.width < -20 || rect.x > cfg.canvasWidth + 40) return;
 
     if (item.collected) {
-      if (item.pop > 0) {
+      if (item.pop > 0 && item.popText) {
         ctx.globalAlpha = item.pop / 18;
         ctx.fillStyle = "#7cf7c1";
         ctx.font = `14px ${cfg.fontFamily}`;
-        ctx.fillText(`+${item.scoreValue}`, rect.x, rect.y - (18 - item.pop));
+        ctx.fillText(item.popText, rect.x, rect.y - (18 - item.pop));
         ctx.globalAlpha = 1;
       }
       return;
