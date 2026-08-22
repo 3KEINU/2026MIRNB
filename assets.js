@@ -15,7 +15,7 @@ const ASSET_MANIFEST = {
   obstacles: {
     crt: "assets/obstacles/crt.png",
     speaker: "assets/obstacles/speaker.png",
-    telephone: "assets/obstacles/telephone.png",
+    telephone: "assets/obstacles/black_phone.png",
     cable: "assets/obstacles/cable.png"
   },
   items: {
