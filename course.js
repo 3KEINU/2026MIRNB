@@ -78,7 +78,9 @@ const SECRET_COURSE_ITEMS = [
   { type: "game", x: 8060, y: 304, scoreValue: 300, spriteKey: "game" },
   { type: "heart", x: 8800, y: 276, spriteKey: "heart", effect: "life" },
   { type: "mic", x: 9780, y: 286, scoreValue: 600, spriteKey: "mic" },
+  { type: "heart", x: 10320, y: 250, spriteKey: "heart", effect: "life" },
   { type: "zine", x: 10940, y: 300, scoreValue: 900, spriteKey: "zine" },
   { type: "game", x: 12100, y: 282, scoreValue: 600, spriteKey: "game" },
+  { type: "heart", x: 12660, y: 264, spriteKey: "heart", effect: "life" },
   { type: "mic", x: 13000, y: 286, scoreValue: 600, spriteKey: "mic" }
 ];
