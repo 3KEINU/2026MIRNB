@@ -190,6 +190,14 @@ button {
   width: 100%;
 }
 
+.title-logo-image {
+  display: block;
+  width: min(100%, 330px);
+  height: auto;
+  margin: 0 auto;
+  image-rendering: auto;
+}
+
 .eyebrow {
   display: block;
   margin-bottom: 10px;
