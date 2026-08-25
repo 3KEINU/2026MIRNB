@@ -62,6 +62,15 @@ button {
   border-inline: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.app.is-showcase {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.app.is-showcase .status-bar,
+.app.is-showcase .controls {
+  display: none;
+}
+
 .game-panel {
   position: relative;
   min-height: 0;
@@ -140,9 +149,7 @@ button {
   gap: 28px;
   padding: 24px;
   text-align: center;
-  background:
-    linear-gradient(rgba(16, 22, 44, 0.7), rgba(16, 22, 44, 0.92)),
-    repeating-linear-gradient(0deg, #121a35 0 12px, #162448 12px 24px);
+  background: linear-gradient(rgba(7, 16, 31, 0.12), rgba(7, 16, 31, 0.42));
 }
 
 .small-action {
