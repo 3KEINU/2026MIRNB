@@ -337,6 +337,10 @@ function isGameplayChromeVisible() {
   return game.mode === "playing" || game.mode === "intro" || game.mode === "goalExit";
 }
 
+function isShowcaseCanvasMode() {
+  return !isGameplayChromeVisible();
+}
+
 function hideScreens() {
   titleScreen.hidden = true;
   consoleScreen.hidden = true;
@@ -554,7 +558,7 @@ function loop(time) {
     updateIntro(delta);
   } else if (game.mode === "goalExit") {
     updateGoalExit(delta);
-  } else if (game.mode === "title" || game.mode === "secretTitle") {
+  } else if (isShowcaseCanvasMode()) {
     updateTitleScene(delta);
   }
 
@@ -931,8 +935,8 @@ function isOverlapping(a, b) {
 function draw(time) {
   beginCanvasFrame();
 
-  if (game.mode === "title" || game.mode === "secretTitle") {
-    drawTitleScene(time);
+  if (isShowcaseCanvasMode()) {
+    drawShowcaseScene(time);
     return;
   }
 
@@ -1016,10 +1020,61 @@ function drawBackground(time) {
   }
 }
 
-function drawTitleScene(time) {
-  withRenderProgress(game.titleProgress, () => {
-    drawBackground(time);
+function drawShowcaseScene(time) {
+  const progress = game.mode === "result" && game.goalRenderProgress
+    ? game.goalRenderProgress
+    : game.titleProgress;
+  const metrics = setShowcaseTransform();
+  withRenderProgress(progress, () => {
+    drawShowcaseBackground(time, metrics.height);
   });
+}
+
+function setShowcaseTransform() {
+  const scale = canvas.width / cfg.canvasWidth || 1;
+  const height = canvas.height / scale;
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
+  return { height };
+}
+
+function drawShowcaseBackground(time, height) {
+  const settings = getModeSettings();
+  const progress = getRenderProgress();
+  const basePath = ASSET_MANIFEST.background.base;
+  const bgPath = ASSET_MANIFEST.background[settings.backgroundKey];
+  const fallbackPath = ASSET_MANIFEST.background[settings.backgroundFallbackKey] || ASSET_MANIFEST.background.normal || ASSET_MANIFEST.background.main;
+  const base = getImage(basePath);
+  const bg = getImage(bgPath) || getImage(fallbackPath);
+  const ground = getImage(ASSET_MANIFEST.background.ground);
+
+  if (base) {
+    ctx.drawImage(base, 0, 0, cfg.canvasWidth, height);
+  } else if (bg) {
+    ctx.drawImage(bg, 0, 0, cfg.canvasWidth, height);
+  } else {
+    ctx.fillStyle = "#07101f";
+    ctx.fillRect(0, 0, cfg.canvasWidth, height);
+    ctx.fillStyle = "#101b34";
+    for (let y = 76; y < height; y += 34) {
+      ctx.fillRect(0, y, cfg.canvasWidth, 2);
+    }
+    ctx.fillStyle = "#1d3156";
+    for (let x = -((progress * 0.25) % 70); x < cfg.canvasWidth; x += 70) {
+      ctx.fillRect(x, Math.min(height - 170, 138 + Math.sin((time / 900) + x) * 8), 32, 88);
+    }
+  }
+
+  drawParallaxWindows();
+
+  if (ground) {
+    drawLoopingStrip(ground, Math.max(0, height - ground.height), ground.height, cfg.background.groundScrollFactor);
+  } else {
+    const groundY = Math.max(0, height - 58);
+    ctx.fillStyle = "#245dcc";
+    ctx.fillRect(0, groundY, cfg.canvasWidth, 8);
+    ctx.fillStyle = "#0b0f1d";
+    ctx.fillRect(0, groundY + 8, cfg.canvasWidth, height - groundY - 8);
+  }
 }
 
 function drawIntroScene(time) {
