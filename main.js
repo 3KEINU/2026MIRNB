@@ -72,6 +72,7 @@ const game = {
   introTimer: 0,
   goalExitTimer: 0,
   goalRenderProgress: 0,
+  backgroundOffset: 0,
   progress: 0,
   score: 0,
   itemScore: 0,
@@ -294,10 +295,9 @@ function syncAppHeight() {
   const height = viewport ? viewport.height : window.innerHeight;
   const width = viewport ? viewport.width : window.innerWidth;
   if (!height) return;
-  const hasGameplayChrome = isGameplayChromeVisible();
-  const controlHeight = hasGameplayChrome ? clamp(height * 0.2, 96, 144) : 0;
-  const statusHeight = hasGameplayChrome ? clamp(height * 0.055, 34, 44) : 0;
-  const verticalReserve = hasGameplayChrome ? 32 : 16;
+  const controlHeight = clamp(height * 0.2, 96, 144);
+  const statusHeight = clamp(height * 0.055, 34, 44);
+  const verticalReserve = 32;
   const gameHeight = Math.max(1, height - controlHeight - statusHeight - verticalReserve);
   const maxAppWidth = (cfg.layout && cfg.layout.maxAppWidth) || 900;
   const appWidth = isCanvasAspectPreserved()
@@ -396,6 +396,7 @@ function resetGame() {
   game.introTimer = 0;
   game.goalExitTimer = 0;
   game.goalRenderProgress = 0;
+  game.backgroundOffset = 0;
   game.player.x = cfg.playerX;
   game.player.y = cfg.groundY - cfg.player.height;
   game.player.vy = 0;
@@ -483,6 +484,7 @@ function startGame(playMode = "normal") {
   resetGame();
   game.mode = "intro";
   game.introTimer = 0;
+  game.backgroundOffset = game.titleProgress;
   game.player.x = -cfg.player.width - 16;
   game.player.y = cfg.groundY - cfg.player.height;
   game.player.vy = 0;
@@ -498,7 +500,7 @@ function startGoalExit() {
   const settings = getModeSettings();
   game.mode = "goalExit";
   game.goalExitTimer = 0;
-  game.goalRenderProgress = settings.courseLength;
+  game.goalRenderProgress = settings.courseLength + game.backgroundOffset;
   game.progress = settings.courseLength;
   game.player.y = cfg.groundY - cfg.player.height;
   game.player.vy = 0;
@@ -566,10 +568,12 @@ function updateTitleScene(delta) {
 }
 
 function updateIntro(delta) {
+  const settings = getModeSettings();
   const runDuration = 0.85;
   const holdDuration = 0.34;
   const startX = -cfg.player.width - 16;
   game.introTimer += delta;
+  game.backgroundOffset += settings.baseSpeed * delta;
 
   const runRatio = clamp(game.introTimer / runDuration, 0, 1);
   const eased = 1 - Math.pow(1 - runRatio, 3);
@@ -1019,7 +1023,7 @@ function drawTitleScene(time) {
 }
 
 function drawIntroScene(time) {
-  withRenderProgress(0, () => {
+  withRenderProgress(game.backgroundOffset, () => {
     drawBackground(time);
   });
   drawPlayer(time);
@@ -1059,7 +1063,7 @@ function withRenderProgress(progress, callback) {
 }
 
 function getRenderProgress() {
-  return renderProgressOverride === null ? game.progress : renderProgressOverride;
+  return renderProgressOverride === null ? game.progress + game.backgroundOffset : renderProgressOverride;
 }
 
 function drawParallaxWindows() {
