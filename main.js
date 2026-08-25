@@ -32,6 +32,7 @@ const retryButton = document.getElementById("retryButton");
 const titleButton = document.getElementById("titleButton");
 const jumpButton = document.getElementById("jumpButton");
 const boostButton = document.getElementById("boostButton");
+const app = document.querySelector(".app");
 const consoleDevice = document.querySelector(".console-device");
 const consoleArtboard = document.querySelector(".console-artboard");
 
@@ -67,6 +68,10 @@ const game = {
   playMode: "normal",
   storyReturnMode: "normal",
   lastTime: 0,
+  titleProgress: 0,
+  introTimer: 0,
+  goalExitTimer: 0,
+  goalRenderProgress: 0,
   progress: 0,
   score: 0,
   itemScore: 0,
@@ -88,6 +93,7 @@ const game = {
 };
 
 let consoleHistory = [];
+let renderProgressOverride = null;
 
 storyBody.textContent = STORY_TEXT;
 creditsBody.textContent = CREDITS_TEXT;
@@ -277,6 +283,7 @@ function getCourseData(mode = game.playMode) {
 }
 
 function syncLayout() {
+  syncAppChrome();
   syncAppHeight();
   resizeCanvas();
   syncConsoleArtboard();
@@ -287,15 +294,22 @@ function syncAppHeight() {
   const height = viewport ? viewport.height : window.innerHeight;
   const width = viewport ? viewport.width : window.innerWidth;
   if (!height) return;
-  const controlHeight = clamp(height * 0.2, 96, 144);
-  const statusHeight = clamp(height * 0.055, 34, 44);
-  const gameHeight = Math.max(1, height - controlHeight - statusHeight - 32);
+  const hasGameplayChrome = isGameplayChromeVisible();
+  const controlHeight = hasGameplayChrome ? clamp(height * 0.2, 96, 144) : 0;
+  const statusHeight = hasGameplayChrome ? clamp(height * 0.055, 34, 44) : 0;
+  const verticalReserve = hasGameplayChrome ? 32 : 16;
+  const gameHeight = Math.max(1, height - controlHeight - statusHeight - verticalReserve);
   const maxAppWidth = (cfg.layout && cfg.layout.maxAppWidth) || 900;
   const appWidth = isCanvasAspectPreserved()
     ? Math.min(width || 480, (gameHeight * cfg.canvasWidth / cfg.canvasHeight) + 20, maxAppWidth)
     : Math.min(width || 480, 480);
   document.documentElement.style.setProperty("--app-height", `${Math.floor(height)}px`);
   document.documentElement.style.setProperty("--app-width", `${Math.floor(appWidth)}px`);
+}
+
+function syncAppChrome() {
+  if (!app) return;
+  app.classList.toggle("is-showcase", !isGameplayChromeVisible());
 }
 
 function syncConsoleArtboard() {
@@ -317,6 +331,10 @@ function clamp(value, min, max) {
 
 function isCanvasAspectPreserved() {
   return !cfg.layout || cfg.layout.preserveCanvasAspect !== false;
+}
+
+function isGameplayChromeVisible() {
+  return game.mode === "playing" || game.mode === "intro" || game.mode === "goalExit";
 }
 
 function hideScreens() {
@@ -375,6 +393,9 @@ function resetGame() {
   game.life = settings.maxLife;
   game.invincibleTimer = 0;
   game.resultWasClear = false;
+  game.introTimer = 0;
+  game.goalExitTimer = 0;
+  game.goalRenderProgress = 0;
   game.player.x = cfg.playerX;
   game.player.y = cfg.groundY - cfg.player.height;
   game.player.vy = 0;
@@ -392,6 +413,7 @@ function showTitle() {
   setBoost(false);
   hideScreens();
   titleScreen.hidden = false;
+  syncLayout();
   playBgm("title");
 }
 
@@ -403,6 +425,7 @@ function showConsole() {
   consoleDisplay.classList.remove("is-command-input");
   consoleDisplay.textContent = "> COMMAND?";
   consoleScreen.hidden = false;
+  syncLayout();
   requestAnimationFrame(syncConsoleArtboard);
   playBgm("title");
 }
@@ -414,6 +437,7 @@ function showSecretTitle() {
   setBoost(false);
   hideScreens();
   secretTitleScreen.hidden = false;
+  syncLayout();
   playBgm(settings.titleBgmKey, settings.bgmFallback.title);
 }
 
@@ -424,6 +448,7 @@ function showStory(storyMode = "normal") {
   hideScreens();
   storyScreen.hidden = false;
   storyBody.scrollTop = 0;
+  syncLayout();
   if (storyMode === "secret") {
     const settings = getModeSettings("secret");
     playBgm(settings.titleBgmKey, settings.bgmFallback.title);
@@ -448,6 +473,7 @@ function showCredits() {
   creditsBody.textContent = CREDITS_TEXT;
   creditsScreen.hidden = false;
   creditsBody.scrollTop = 0;
+  syncLayout();
   playBgm("title");
 }
 
@@ -455,11 +481,32 @@ function startGame(playMode = "normal") {
   game.playMode = playMode;
   const settings = getModeSettings();
   resetGame();
-  game.mode = "playing";
+  game.mode = "intro";
+  game.introTimer = 0;
+  game.player.x = -cfg.player.width - 16;
+  game.player.y = cfg.groundY - cfg.player.height;
+  game.player.vy = 0;
+  game.player.grounded = true;
   game.lastTime = performance.now();
   hideScreens();
+  syncLayout();
   playSound("start");
   playBgm(settings.playBgmKey, settings.bgmFallback.play);
+}
+
+function startGoalExit() {
+  const settings = getModeSettings();
+  game.mode = "goalExit";
+  game.goalExitTimer = 0;
+  game.goalRenderProgress = settings.courseLength;
+  game.progress = settings.courseLength;
+  game.player.y = cfg.groundY - cfg.player.height;
+  game.player.vy = 0;
+  game.player.grounded = true;
+  setBoost(false);
+  playSound("goal");
+  syncLayout();
+  updateHud();
 }
 
 function showResult(clear) {
@@ -481,9 +528,7 @@ function showResult(clear) {
   titleButton.textContent = game.playMode === "secret" ? "SECRET TITLE" : "TITLE";
   hideScreens();
   resultScreen.hidden = false;
-  if (clear) {
-    playSound("goal");
-  }
+  syncLayout();
   playBgm(settings.titleBgmKey, settings.bgmFallback.title);
   updateHud();
 }
@@ -503,10 +548,56 @@ function loop(time) {
 
   if (game.mode === "playing") {
     update(delta);
+  } else if (game.mode === "intro") {
+    updateIntro(delta);
+  } else if (game.mode === "goalExit") {
+    updateGoalExit(delta);
+  } else if (game.mode === "title" || game.mode === "secretTitle") {
+    updateTitleScene(delta);
   }
 
   draw(time);
   requestAnimationFrame(loop);
+}
+
+function updateTitleScene(delta) {
+  const settings = getModeSettings();
+  game.titleProgress += settings.baseSpeed * 0.45 * delta;
+}
+
+function updateIntro(delta) {
+  const runDuration = 0.85;
+  const holdDuration = 0.34;
+  const startX = -cfg.player.width - 16;
+  game.introTimer += delta;
+
+  const runRatio = clamp(game.introTimer / runDuration, 0, 1);
+  const eased = 1 - Math.pow(1 - runRatio, 3);
+  game.player.x = startX + (cfg.playerX - startX) * eased;
+  game.player.y = cfg.groundY - cfg.player.height;
+  game.player.vy = 0;
+  game.player.grounded = true;
+
+  if (game.introTimer >= runDuration + holdDuration) {
+    game.player.x = cfg.playerX;
+    game.mode = "playing";
+    game.lastTime = performance.now();
+  }
+}
+
+function updateGoalExit(delta) {
+  const settings = getModeSettings();
+  const exitSpeed = Math.max(settings.baseSpeed, 300);
+  game.goalExitTimer += delta;
+  game.goalRenderProgress += exitSpeed * delta;
+  game.player.x += exitSpeed * 1.15 * delta;
+  game.player.y = cfg.groundY - cfg.player.height;
+  game.player.vy = 0;
+  game.player.grounded = true;
+
+  if (game.player.x > cfg.canvasWidth + cfg.player.width + 8) {
+    showResult(true);
+  }
 }
 
 function update(delta) {
@@ -534,7 +625,7 @@ function update(delta) {
   }
 
   if (game.progress >= settings.courseLength) {
-    showResult(true);
+    startGoalExit();
   }
 
   updateHud();
@@ -835,15 +926,27 @@ function isOverlapping(a, b) {
 
 function draw(time) {
   beginCanvasFrame();
+
+  if (game.mode === "title" || game.mode === "secretTitle") {
+    drawTitleScene(time);
+    return;
+  }
+
+  if (game.mode === "intro") {
+    drawIntroScene(time);
+    return;
+  }
+
+  if (game.mode === "goalExit") {
+    drawGoalExitScene(time);
+    return;
+  }
+
   drawBackground(time);
   drawCourseProgress();
   drawItems();
   drawObstacles();
   drawPlayer(time);
-
-  if (game.mode === "title") {
-    drawAttractScene(time);
-  }
 }
 
 function beginCanvasFrame() {
@@ -868,6 +971,7 @@ function beginCanvasFrame() {
 
 function drawBackground(time) {
   const settings = getModeSettings();
+  const progress = getRenderProgress();
   const basePath = ASSET_MANIFEST.background.base;
   const bgPath = ASSET_MANIFEST.background[settings.backgroundKey];
   const fallbackPath = ASSET_MANIFEST.background[settings.backgroundFallbackKey] || ASSET_MANIFEST.background.normal || ASSET_MANIFEST.background.main;
@@ -887,11 +991,11 @@ function drawBackground(time) {
       ctx.fillRect(0, y, cfg.canvasWidth, 2);
     }
     ctx.fillStyle = "#1d3156";
-    for (let x = -((game.progress * 0.25) % 70); x < cfg.canvasWidth; x += 70) {
+    for (let x = -((progress * 0.25) % 70); x < cfg.canvasWidth; x += 70) {
       ctx.fillRect(x, 138 + Math.sin((time / 900) + x) * 8, 32, 88);
     }
     ctx.fillStyle = "#203f73";
-    for (let x = -((game.progress * 0.55) % 46); x < cfg.canvasWidth; x += 46) {
+    for (let x = -((progress * 0.55) % 46); x < cfg.canvasWidth; x += 46) {
       ctx.fillRect(x, cfg.groundY + 16, 24, 10);
     }
   }
@@ -908,6 +1012,56 @@ function drawBackground(time) {
   }
 }
 
+function drawTitleScene(time) {
+  withRenderProgress(game.titleProgress, () => {
+    drawBackground(time);
+  });
+}
+
+function drawIntroScene(time) {
+  withRenderProgress(0, () => {
+    drawBackground(time);
+  });
+  drawPlayer(time);
+
+  if (game.introTimer >= 0.85) {
+    drawSceneMessage("START!");
+  }
+}
+
+function drawGoalExitScene(time) {
+  withRenderProgress(game.goalRenderProgress, () => {
+    drawBackground(time);
+  });
+  drawCourseProgress();
+  drawPlayer(time);
+  drawSceneMessage("GOAL!");
+}
+
+function drawSceneMessage(text) {
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `28px ${cfg.fontFamily}`;
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#07101f";
+  ctx.strokeText(text, cfg.canvasWidth / 2, 168);
+  ctx.fillStyle = "#7cf7c1";
+  ctx.fillText(text, cfg.canvasWidth / 2, 168);
+  ctx.restore();
+}
+
+function withRenderProgress(progress, callback) {
+  const previous = renderProgressOverride;
+  renderProgressOverride = progress;
+  callback();
+  renderProgressOverride = previous;
+}
+
+function getRenderProgress() {
+  return renderProgressOverride === null ? game.progress : renderProgressOverride;
+}
+
 function drawParallaxWindows() {
   const windowConfig = cfg.background.windows;
   if (!windowConfig || !windowConfig.enabled) return;
@@ -916,7 +1070,7 @@ function drawParallaxWindows() {
   if (!far) return;
 
   const loopWidth = Math.max(cfg.canvasWidth, windowConfig.loopWidth || cfg.canvasWidth);
-  const travel = (game.progress * windowConfig.scrollFactor) % loopWidth;
+  const travel = (getRenderProgress() * windowConfig.scrollFactor) % loopWidth;
 
   for (let repeat = -1; repeat <= 1; repeat += 1) {
     windowConfig.entries.forEach((entry) => {
@@ -1020,7 +1174,7 @@ function drawEllipseWindowInterior(entry, x, far) {
 function drawWindowFarLayer(image, scrollFactor) {
   const scale = cfg.canvasHeight / image.height;
   const width = Math.max(1, image.width * scale);
-  const offset = -((game.progress * scrollFactor) % width);
+  const offset = -((getRenderProgress() * scrollFactor) % width);
 
   for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
     ctx.drawImage(image, x, 0, width, cfg.canvasHeight);
@@ -1030,7 +1184,7 @@ function drawWindowFarLayer(image, scrollFactor) {
 function drawWindowFarLayerInto(targetCtx, image, targetX, targetY) {
   const scale = cfg.canvasHeight / image.height;
   const width = Math.max(1, image.width * scale);
-  const offset = -((game.progress * cfg.background.windows.farScrollFactor) % width);
+  const offset = -((getRenderProgress() * cfg.background.windows.farScrollFactor) % width);
 
   for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
     targetCtx.drawImage(image, x - targetX, -targetY, width, cfg.canvasHeight);
@@ -1054,7 +1208,7 @@ function drawLoopingBackground(bg, scrollFactor) {
 
   const scale = cfg.canvasHeight / bg.height;
   const width = Math.max(1, bg.width * scale);
-  const offset = -((game.progress * scrollFactor) % width);
+  const offset = -((getRenderProgress() * scrollFactor) % width);
 
   for (let x = offset; x < cfg.canvasWidth; x += width) {
     ctx.drawImage(bg, x, 0, width, cfg.canvasHeight);
@@ -1063,7 +1217,7 @@ function drawLoopingBackground(bg, scrollFactor) {
 
 function drawLoopingStrip(image, y, height, scrollFactor) {
   const width = Math.max(1, image.width);
-  const offset = -((game.progress * scrollFactor) % width);
+  const offset = -((getRenderProgress() * scrollFactor) % width);
 
   for (let x = offset; x < cfg.canvasWidth; x += width) {
     ctx.drawImage(image, x, y, width, height);
