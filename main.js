@@ -441,7 +441,10 @@ function showSecretTitle() {
   game.playMode = "secret";
   setBoost(false);
   hideScreens();
+  secretTitleScreen.classList.remove("is-secret-bdash-enter");
   secretTitleScreen.hidden = false;
+  void secretTitleScreen.offsetWidth;
+  secretTitleScreen.classList.add("is-secret-bdash-enter");
   syncLayout();
   playBgm(settings.titleBgmKey, settings.bgmFallback.title);
 }
