@@ -152,6 +152,18 @@ button {
   background: linear-gradient(rgba(7, 16, 31, 0.12), rgba(7, 16, 31, 0.42));
 }
 
+.main-title-screen {
+  justify-content: center;
+}
+
+.title-stack {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 28px;
+  transform: translateY(-30px);
+}
+
 .small-action {
   min-height: 40px;
   padding: 8px 14px;
@@ -199,7 +211,7 @@ button {
 
 .title-logo-image {
   display: block;
-  width: min(100%, 330px);
+  width: min(108%, 386px);
   height: auto;
   margin: 0 auto;
   image-rendering: auto;
@@ -227,9 +239,37 @@ h1 {
 }
 
 .title-logo p {
-  margin-top: 14px;
+  margin-top: 2px;
   color: #ffdde6;
-  font-size: clamp(1rem, 5vw, 1.3rem);
+  font-size: clamp(0.76rem, 3.3vw, 1rem);
+  text-shadow: 0 2px 0 rgba(7, 16, 31, 0.52);
+}
+
+.title-menu {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.title-menu-item {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f7fbff;
+  cursor: pointer;
+  line-height: 1.05;
+  text-shadow: 0 3px 0 #1f2a4c, 0 0 8px rgba(7, 16, 31, 0.7);
+  touch-action: manipulation;
+}
+
+.title-menu-main {
+  margin-bottom: 14px;
+  font-size: clamp(1.32rem, 6vw, 1.75rem);
+}
+
+.title-menu-sub {
+  font-size: clamp(0.96rem, 4.4vw, 1.25rem);
 }
 
 .primary-action,
@@ -525,7 +565,8 @@ dd {
 .control-button.is-held,
 .primary-action:active,
 .secondary-action:active,
-.small-action:active {
+.small-action:active,
+.title-menu-item:active {
   transform: translateY(3px);
   filter: brightness(1.12);
 }

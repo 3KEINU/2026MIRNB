@@ -31,7 +31,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260825-title-stage-intro-goal">
+    <link rel="stylesheet" href="styles.css?v=20260826-main-title-layout-2">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -44,16 +44,19 @@
         <div class="status-life"><span>LIFE</span><strong id="lifeLabel">♥♥♥</strong></div>
       </section>
 
-      <section id="titleScreen" class="screen title-screen">
-        <button id="storyButton" class="small-action story-open" type="button">STORY</button>
-        <button id="creditsButton" class="small-action credits-open" type="button">CREDITS</button>
+      <section id="titleScreen" class="screen title-screen main-title-screen">
         <button id="consoleButton" class="console-open" type="button">CONSOLE</button>
-        <div class="title-logo">
-          <span class="eyebrow">MVP TEMP BUILD</span>
-          <img class="title-logo-image" src="assets/ui/title_logo_normal.png" alt="ESCAPE FROM THIRTIES">
-          <p>古川未鈴30代からの脱出!!</p>
+        <div class="title-stack">
+          <div class="title-logo">
+            <img class="title-logo-image" src="assets/ui/title_logo_normal.png" alt="ESCAPE FROM THIRTIES">
+            <p>みりたん2026</p>
+          </div>
+          <nav class="title-menu" aria-label="Title menu">
+            <button id="startButton" class="title-menu-item title-menu-main" type="button">START</button>
+            <button id="storyButton" class="title-menu-item title-menu-sub" type="button">STORY</button>
+            <button id="creditsButton" class="title-menu-item title-menu-sub" type="button">CREDITS</button>
+          </nav>
         </div>
-        <button id="startButton" class="primary-action" type="button">START</button>
       </section>
 
       <section id="consoleScreen" class="screen console-screen" hidden>
@@ -131,11 +134,11 @@
       </section>
     </main>
 
-    <script src="config.js?v=20260823-secret-speed420"></script>
+    <script src="config.js?v=20260826-window-even-spacing"></script>
     <script src="assets.js?v=20260823-tallsspeaker"></script>
     <script src="course.js?v=20260824-secret-heart-5"></script>
     <script src="story.js?v=20260826-secret-story-1"></script>
     <script src="credits.js?v=20260821-credits-sama"></script>
-    <script src="main.js?v=20260826-showcase-full-bleed"></script>
+    <script src="main.js?v=20260826-window-ground-align"></script>
   </body>
 </html>
