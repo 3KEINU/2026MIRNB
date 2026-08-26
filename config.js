@@ -53,21 +53,21 @@ const GAME_CONFIG = {
       enabled: true,
       scrollFactor: 0.72,
       farScrollFactor: 0.16,
-      loopWidth: 760,
+      loopWidth: 680,
       tintAlpha: 0.22,
       entries: [
         {
           frame: "blue",
           x: 380,
-          y: 150,
+          y: 168,
           width: 120,
           height: 150,
           tint: "#3aa6ff"
         },
         {
           frame: "pink",
-          x: 690,
-          y: 185,
+          x: 720,
+          y: 168,
           width: 120,
           height: 150,
           tint: "#ff5cc8"

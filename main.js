@@ -1064,12 +1064,15 @@ function drawShowcaseBackground(time, height) {
     }
   }
 
-  drawParallaxWindows();
-
   if (ground) {
-    drawLoopingStrip(ground, Math.max(0, height - ground.height), ground.height, cfg.background.groundScrollFactor);
+    const showcaseGroundY = Math.max(0, height - ground.height);
+    const showcaseWindowYShift = showcaseGroundY - cfg.groundY;
+    drawParallaxWindows(showcaseWindowYShift);
+    drawLoopingStrip(ground, showcaseGroundY, ground.height, cfg.background.groundScrollFactor);
   } else {
     const groundY = Math.max(0, height - 58);
+    const showcaseWindowYShift = groundY - cfg.groundY;
+    drawParallaxWindows(showcaseWindowYShift);
     ctx.fillStyle = "#245dcc";
     ctx.fillRect(0, groundY, cfg.canvasWidth, 8);
     ctx.fillStyle = "#0b0f1d";
@@ -1121,7 +1124,7 @@ function getRenderProgress() {
   return renderProgressOverride === null ? game.progress + game.backgroundOffset : renderProgressOverride;
 }
 
-function drawParallaxWindows() {
+function drawParallaxWindows(yShift = 0) {
   const windowConfig = cfg.background.windows;
   if (!windowConfig || !windowConfig.enabled) return;
 
@@ -1135,21 +1138,21 @@ function drawParallaxWindows() {
     windowConfig.entries.forEach((entry) => {
       const x = entry.x + repeat * loopWidth - travel;
       if (x + entry.width < -8 || x > cfg.canvasWidth + 8) return;
-      drawParallaxWindow(entry, x, far);
+      drawParallaxWindow(entry, x, far, yShift);
     });
   }
 }
 
-function drawParallaxWindow(entry, x, far) {
-  const y = entry.y;
+function drawParallaxWindow(entry, x, far, yShift = 0) {
+  const y = entry.y + yShift;
   const width = entry.width;
   const height = entry.height;
   const mask = getImage(ASSET_MANIFEST.background.windowMask);
 
   if (mask) {
-    drawMaskedWindowInterior(entry, x, far, mask);
+    drawMaskedWindowInterior(entry, x, y, far, mask, yShift);
   } else {
-    drawEllipseWindowInterior(entry, x, far);
+    drawEllipseWindowInterior(entry, x, y, far, yShift);
   }
 
   const framePath = ASSET_MANIFEST.background.windowFrames[entry.frame];
@@ -1163,8 +1166,7 @@ function drawParallaxWindow(entry, x, far) {
   }
 }
 
-function drawMaskedWindowInterior(entry, x, far, mask) {
-  const y = entry.y;
+function drawMaskedWindowInterior(entry, x, y, far, mask, yShift = 0) {
   const width = entry.width;
   const height = entry.height;
   const scratch = getScratchCanvas(width, height);
@@ -1173,7 +1175,7 @@ function drawMaskedWindowInterior(entry, x, far, mask) {
 
   bufferCtx.setTransform(1, 0, 0, 1, 0, 0);
   bufferCtx.clearRect(0, 0, width, height);
-  drawWindowFarLayerInto(bufferCtx, far, x, y);
+  drawWindowFarLayerInto(bufferCtx, far, x, y, yShift);
   bufferCtx.globalCompositeOperation = "source-over";
   bufferCtx.fillStyle = colorWithAlpha(entry.tint, cfg.background.windows.tintAlpha);
   bufferCtx.fillRect(0, 0, width, height);
@@ -1201,8 +1203,7 @@ function getScratchCanvas(width, height) {
   return scratch;
 }
 
-function drawEllipseWindowInterior(entry, x, far) {
-  const y = entry.y;
+function drawEllipseWindowInterior(entry, x, y, far, yShift = 0) {
   const width = entry.width;
   const height = entry.height;
   const insetX = 10;
@@ -1224,29 +1225,29 @@ function drawEllipseWindowInterior(entry, x, far) {
     Math.PI * 2
   );
   ctx.clip();
-  drawWindowFarLayer(far, cfg.background.windows.farScrollFactor);
+  drawWindowFarLayer(far, cfg.background.windows.farScrollFactor, yShift);
   ctx.fillStyle = colorWithAlpha(entry.tint, cfg.background.windows.tintAlpha);
   ctx.fillRect(x, y, width, height);
   ctx.restore();
 }
 
-function drawWindowFarLayer(image, scrollFactor) {
+function drawWindowFarLayer(image, scrollFactor, yShift = 0) {
   const scale = cfg.canvasHeight / image.height;
   const width = Math.max(1, image.width * scale);
   const offset = -((getRenderProgress() * scrollFactor) % width);
 
   for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
-    ctx.drawImage(image, x, 0, width, cfg.canvasHeight);
+    ctx.drawImage(image, x, yShift, width, cfg.canvasHeight);
   }
 }
 
-function drawWindowFarLayerInto(targetCtx, image, targetX, targetY) {
+function drawWindowFarLayerInto(targetCtx, image, targetX, targetY, yShift = 0) {
   const scale = cfg.canvasHeight / image.height;
   const width = Math.max(1, image.width * scale);
   const offset = -((getRenderProgress() * cfg.background.windows.farScrollFactor) % width);
 
   for (let x = offset - width; x < cfg.canvasWidth + width; x += width) {
-    targetCtx.drawImage(image, x - targetX, -targetY, width, cfg.canvasHeight);
+    targetCtx.drawImage(image, x - targetX, yShift - targetY, width, cfg.canvasHeight);
   }
 }
 
