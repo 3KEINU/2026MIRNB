@@ -347,12 +347,13 @@ h1 {
 .title-menu {
   display: grid;
   justify-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
 .title-menu-item {
   min-width: 0;
-  padding: 0;
+  min-height: 38px;
+  padding: 5px 10px;
   border: 0;
   background: transparent;
   color: #f7fbff;
@@ -363,7 +364,7 @@ h1 {
 }
 
 .title-menu-main {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   font-size: clamp(1.32rem, 6vw, 1.75rem);
 }
 
