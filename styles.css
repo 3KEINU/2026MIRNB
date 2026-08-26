@@ -209,12 +209,34 @@ button {
   width: 100%;
 }
 
+.title-logo-mark {
+  --secret-bdash-width: 58%;
+  --secret-bdash-right: -2%;
+  --secret-bdash-bottom: -10%;
+  --secret-bdash-rotate: -8deg;
+  position: relative;
+  display: inline-block;
+  width: min(108%, 386px);
+  max-width: 100%;
+}
+
 .title-logo-image {
   display: block;
-  width: min(108%, 386px);
+  width: 100%;
   height: auto;
-  margin: 0 auto;
   image-rendering: auto;
+}
+
+.secret-title-bdash {
+  position: absolute;
+  right: var(--secret-bdash-right);
+  bottom: var(--secret-bdash-bottom);
+  width: var(--secret-bdash-width);
+  height: auto;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform: rotate(var(--secret-bdash-rotate));
+  transform-origin: center;
 }
 
 .eyebrow {

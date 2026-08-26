@@ -31,7 +31,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260826-main-title-layout-2">
+    <link rel="stylesheet" href="styles.css?v=20260827-secret-title-bdash-anchor">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -48,7 +48,9 @@
         <button id="consoleButton" class="console-open" type="button">CONSOLE</button>
         <div class="title-stack">
           <div class="title-logo">
-            <img class="title-logo-image" src="assets/ui/title_logo_normal.png" alt="ESCAPE FROM THIRTIES">
+            <div class="title-logo-mark">
+              <img class="title-logo-image" src="assets/ui/title_logo_normal.png" alt="ESCAPE FROM THIRTIES">
+            </div>
             <p>みりたん2026</p>
           </div>
           <nav class="title-menu" aria-label="Title menu">
@@ -79,13 +81,19 @@
       </section>
 
       <section id="secretTitleScreen" class="screen title-screen secret-title-screen" hidden>
-        <button id="secretStoryButton" class="small-action" type="button">STORY</button>
-        <div class="title-logo">
-          <span class="eyebrow">SECRET MODE</span>
-          <h1>みりんのハートにBダッシュ</h1>
+        <div class="title-stack">
+          <div class="title-logo">
+            <div class="title-logo-mark">
+              <img class="title-logo-image" src="assets/ui/title_logo_normal.png" alt="ESCAPE FROM THIRTIES">
+              <img class="secret-title-bdash" src="assets/ui/SIDEBDASH.png" alt="B-DASH">
+            </div>
+          </div>
+          <nav class="title-menu" aria-label="Secret title menu">
+            <button id="secretStartButton" class="title-menu-item title-menu-main" type="button">START</button>
+            <button id="secretStoryButton" class="title-menu-item title-menu-sub" type="button">STORY</button>
+            <button id="normalModeButton" class="title-menu-item title-menu-sub" type="button">NORMAL MODE</button>
+          </nav>
         </div>
-        <button id="secretStartButton" class="primary-action" type="button">START</button>
-        <button id="normalModeButton" class="secondary-action" type="button">NORMAL MODE</button>
       </section>
 
       <section id="storyScreen" class="screen story-screen" hidden>
