@@ -239,6 +239,10 @@ button {
   transform-origin: center;
 }
 
+.secret-title-screen .title-menu {
+  margin-top: 18px;
+}
+
 .eyebrow {
   display: block;
   margin-bottom: 10px;
