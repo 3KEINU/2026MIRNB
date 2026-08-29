@@ -183,28 +183,6 @@ button {
   top: 62px;
 }
 
-.title-screen > .console-open {
-  position: absolute;
-  z-index: 20;
-  left: 14px;
-  right: auto;
-  top: auto;
-  bottom: 14px;
-  width: auto;
-  max-width: 34vw;
-  min-height: 34px;
-  padding: 6px 10px;
-  border: 2px solid rgba(124, 247, 193, 0.44);
-  border-radius: 0;
-  background: rgba(7, 16, 31, 0.72);
-  color: rgba(182, 255, 226, 0.86);
-  cursor: pointer;
-  font-size: 0.68rem;
-  line-height: 1;
-  touch-action: manipulation;
-  pointer-events: auto;
-}
-
 .title-logo {
   width: 100%;
 }
@@ -370,6 +348,32 @@ h1 {
 
 .title-menu-sub {
   font-size: clamp(0.96rem, 4.4vw, 1.25rem);
+}
+
+.title-menu-hidden {
+  margin-top: 22px;
+  color: rgba(124, 247, 193, 0.5);
+  font-size: clamp(0.74rem, 3.5vw, 0.98rem);
+  text-shadow: 0 2px 0 rgba(12, 30, 42, 0.62), 0 0 4px rgba(124, 247, 193, 0.28);
+  animation: hidden-menu-pulse 2.4s steps(3, end) infinite;
+}
+
+@keyframes hidden-menu-pulse {
+  0%,
+  100% {
+    color: rgba(124, 247, 193, 0.36);
+    text-shadow: 0 2px 0 rgba(12, 30, 42, 0.62), 0 0 2px rgba(124, 247, 193, 0.14);
+  }
+
+  42% {
+    color: rgba(124, 247, 193, 0.76);
+    text-shadow: 0 2px 0 rgba(12, 30, 42, 0.62), 0 0 8px rgba(124, 247, 193, 0.45);
+  }
+
+  58% {
+    color: rgba(124, 247, 193, 0.46);
+    text-shadow: 0 2px 0 rgba(12, 30, 42, 0.62), 0 0 3px rgba(124, 247, 193, 0.22);
+  }
 }
 
 .primary-action,
