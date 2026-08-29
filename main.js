@@ -462,7 +462,7 @@ function startConsoleHints() {
   if (!consoleHintText) return;
   stopConsoleHints();
   consoleHintIndex = 0;
-  consoleHintTimer = window.setTimeout(showConsoleHint, 900);
+  consoleHintTimer = window.setTimeout(showConsoleHint, 1900);
 }
 
 function stopConsoleHints() {
@@ -492,7 +492,7 @@ function showConsoleHint() {
   void consoleHintText.offsetWidth;
   consoleHintText.classList.add("is-visible");
 
-  const nextDelay = 3600 + Math.random() * 1800;
+  const nextDelay = 5000 + Math.random() * 2400;
   consoleHintTimer = window.setTimeout(showConsoleHint, nextDelay);
 }
 
