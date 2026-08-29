@@ -524,12 +524,12 @@ h1 {
   font-size: clamp(0.64rem, 2.9vw, 0.9rem);
   line-height: 1;
   white-space: nowrap;
-  text-shadow: 0 0 7px rgba(124, 247, 193, 0.26);
+  text-shadow: 0 0 6px rgba(124, 247, 193, 0.18);
   transform: translate(-50%, -50%);
 }
 
 .console-hint-text.is-visible {
-  animation: console-hint-float 2.6s ease-out both;
+  animation: console-hint-float 3.1s ease-out both;
 }
 
 @keyframes console-hint-float {
@@ -540,13 +540,13 @@ h1 {
   }
 
   18% {
-    opacity: 1;
-    color: rgba(124, 247, 193, 0.62);
+    opacity: 0.86;
+    color: rgba(124, 247, 193, 0.5);
   }
 
   58% {
-    opacity: 0.78;
-    color: rgba(124, 247, 193, 0.5);
+    opacity: 0.64;
+    color: rgba(124, 247, 193, 0.38);
   }
 
   100% {
