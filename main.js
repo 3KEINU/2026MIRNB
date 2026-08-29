@@ -18,6 +18,7 @@ const resultStatus = document.getElementById("resultStatus");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
 const resultItems = document.getElementById("resultItems");
+const consoleHintText = document.getElementById("consoleHintText");
 const startButton = document.getElementById("startButton");
 const secretStartButton = document.getElementById("secretStartButton");
 const normalModeButton = document.getElementById("normalModeButton");
@@ -62,6 +63,24 @@ const SECRET_SYMBOLS = {
   A: "A",
   B: "B"
 };
+const CONSOLE_HINTS = [
+  {
+    text: "みりんの…",
+    positions: [
+      { x: 33, y: 28 },
+      { x: 36, y: 64 },
+      { x: 40, y: 22 }
+    ]
+  },
+  {
+    text: "ハートに…",
+    positions: [
+      { x: 70, y: 30 },
+      { x: 66, y: 68 },
+      { x: 76, y: 56 }
+    ]
+  }
+];
 
 const game = {
   mode: "title",
@@ -94,6 +113,8 @@ const game = {
 };
 
 let consoleHistory = [];
+let consoleHintTimer = null;
+let consoleHintIndex = 0;
 let renderProgressOverride = null;
 
 storyBody.textContent = STORY_TEXT;
@@ -342,6 +363,7 @@ function isShowcaseCanvasMode() {
 }
 
 function hideScreens() {
+  stopConsoleHints();
   titleScreen.hidden = true;
   consoleScreen.hidden = true;
   secretTitleScreen.hidden = true;
@@ -432,7 +454,46 @@ function showConsole() {
   consoleScreen.hidden = false;
   syncLayout();
   requestAnimationFrame(syncConsoleArtboard);
+  startConsoleHints();
   playBgm("title");
+}
+
+function startConsoleHints() {
+  if (!consoleHintText) return;
+  stopConsoleHints();
+  consoleHintIndex = 0;
+  consoleHintTimer = window.setTimeout(showConsoleHint, 900);
+}
+
+function stopConsoleHints() {
+  if (consoleHintTimer !== null) {
+    window.clearTimeout(consoleHintTimer);
+    consoleHintTimer = null;
+  }
+  if (consoleHintText) {
+    consoleHintText.classList.remove("is-visible");
+    consoleHintText.textContent = "";
+  }
+}
+
+function showConsoleHint() {
+  if (!consoleHintText || game.mode !== "console" || consoleHistory.length > 0) {
+    consoleHintTimer = null;
+    return;
+  }
+
+  const hint = CONSOLE_HINTS[consoleHintIndex % CONSOLE_HINTS.length];
+  consoleHintIndex += 1;
+  const position = hint.positions[Math.floor(Math.random() * hint.positions.length)];
+  consoleHintText.classList.remove("is-visible");
+  consoleHintText.textContent = hint.text;
+  consoleHintText.style.setProperty("--hint-x", `${position.x}%`);
+  consoleHintText.style.setProperty("--hint-y", `${position.y}%`);
+  void consoleHintText.offsetWidth;
+  consoleHintText.classList.add("is-visible");
+
+  const nextDelay = 3600 + Math.random() * 1800;
+  consoleHintTimer = window.setTimeout(showConsoleHint, nextDelay);
 }
 
 function showSecretTitle() {
@@ -783,6 +844,7 @@ function playBgm(key, fallbackKey) {
 function pressConsoleButton(value) {
   if (game.mode !== "console") return;
 
+  stopConsoleHints();
   consoleHistory.push(value);
   if (consoleHistory.length > SECRET_COMMAND.length) {
     consoleHistory.shift();
