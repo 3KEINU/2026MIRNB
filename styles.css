@@ -485,6 +485,7 @@ h1 {
   top: 8.4615%;
   width: 74.1667%;
   height: 35%;
+  z-index: 1;
   display: grid;
   place-items: center;
   padding: 6px;
@@ -502,6 +503,57 @@ h1 {
 
 .console-display.is-command-input {
   font-size: clamp(0.72rem, 3.7vw, 1rem);
+}
+
+.console-hint-layer {
+  position: absolute;
+  left: 12.7778%;
+  top: 8.4615%;
+  width: 74.1667%;
+  height: 35%;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.console-hint-text {
+  position: absolute;
+  left: var(--hint-x, 24%);
+  top: var(--hint-y, 28%);
+  color: rgba(124, 247, 193, 0);
+  font-size: clamp(0.64rem, 2.9vw, 0.9rem);
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: 0 0 7px rgba(124, 247, 193, 0.26);
+  transform: translate(-50%, -50%);
+}
+
+.console-hint-text.is-visible {
+  animation: console-hint-float 2.6s ease-out both;
+}
+
+@keyframes console-hint-float {
+  0% {
+    opacity: 0;
+    color: rgba(124, 247, 193, 0);
+    transform: translate(-50%, calc(-50% + 5px));
+  }
+
+  18% {
+    opacity: 1;
+    color: rgba(124, 247, 193, 0.62);
+  }
+
+  58% {
+    opacity: 0.78;
+    color: rgba(124, 247, 193, 0.5);
+  }
+
+  100% {
+    opacity: 0;
+    color: rgba(124, 247, 193, 0);
+    transform: translate(-50%, calc(-50% - 4px));
+  }
 }
 
 .console-hit {
