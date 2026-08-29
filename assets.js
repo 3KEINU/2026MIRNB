@@ -24,8 +24,14 @@ const ASSET_MANIFEST = {
       "assets/items/item_game_blue.png",
       "assets/items/item_game_yellow.png"
     ],
-    mic: "assets/items/mic.png",
-    zine: "assets/items/zine.png",
+    mic: [
+      "assets/items/item_mic_blue.png",
+      "assets/items/item_mic_yellow.png"
+    ],
+    zine: [
+      "assets/items/item_biribiri_blue.png",
+      "assets/items/item_biribiri_yellow.png"
+    ],
     heart: "assets/items/heart.png"
   },
   background: {
