@@ -22,19 +22,19 @@ const COURSE_OBSTACLES = [
 ];
 
 const COURSE_ITEMS = [
-  { type: "game", x: 480, y: 330, scoreValue: 100, spriteKey: "game" },
+  { type: "game", x: 480, y: 330, width: 33, height: 33, scoreValue: 100, spriteKey: "game" },
   { type: "mic", x: 1180, y: 286, scoreValue: 300, spriteKey: "mic" },
   { type: "zine", x: 1850, y: 300, scoreValue: 300, spriteKey: "zine" },
-  { type: "game", x: 2620, y: 314, scoreValue: 100, spriteKey: "game" },
+  { type: "game", x: 2620, y: 314, width: 33, height: 33, scoreValue: 100, spriteKey: "game" },
   { type: "mic", x: 3740, y: 282, scoreValue: 300, spriteKey: "mic" },
-  { type: "game", x: 4880, y: 306, scoreValue: 100, spriteKey: "game" },
+  { type: "game", x: 4880, y: 306, width: 33, height: 33, scoreValue: 100, spriteKey: "game" },
   { type: "zine", x: 5480, y: 282, scoreValue: 500, spriteKey: "zine" },
-  { type: "game", x: 6100, y: 318, scoreValue: 100, spriteKey: "game" },
+  { type: "game", x: 6100, y: 318, width: 33, height: 33, scoreValue: 100, spriteKey: "game" },
   { type: "mic", x: 6680, y: 286, scoreValue: 300, spriteKey: "mic" },
-  { type: "game", x: 7290, y: 310, scoreValue: 100, spriteKey: "game" },
+  { type: "game", x: 7290, y: 310, width: 33, height: 33, scoreValue: 100, spriteKey: "game" },
   { type: "zine", x: 8390, y: 326, scoreValue: 100, spriteKey: "zine" },
   { type: "mic", x: 9000, y: 284, scoreValue: 300, spriteKey: "mic" },
-  { type: "game", x: 10220, y: 288, scoreValue: 300, spriteKey: "game" },
+  { type: "game", x: 10220, y: 288, width: 33, height: 33, scoreValue: 300, spriteKey: "game" },
   { type: "zine", x: 10950, y: 316, scoreValue: 100, spriteKey: "zine" }
 ];
 
@@ -67,20 +67,20 @@ const SECRET_COURSE_OBSTACLES = [
 ];
 
 const SECRET_COURSE_ITEMS = [
-  { type: "game", x: 560, y: 325, scoreValue: 200, spriteKey: "game" },
+  { type: "game", x: 560, y: 325, width: 33, height: 33, scoreValue: 200, spriteKey: "game" },
   { type: "mic", x: 1460, y: 286, scoreValue: 600, spriteKey: "mic" },
   { type: "zine", x: 2460, y: 312, scoreValue: 300, spriteKey: "zine" },
   { type: "heart", x: 2760, y: 252, spriteKey: "heart", effect: "life" },
-  { type: "game", x: 3980, y: 286, scoreValue: 600, spriteKey: "game" },
+  { type: "game", x: 3980, y: 286, width: 33, height: 33, scoreValue: 600, spriteKey: "game" },
   { type: "mic", x: 5480, y: 318, scoreValue: 300, spriteKey: "mic" },
   { type: "heart", x: 6120, y: 248, spriteKey: "heart", effect: "life" },
   { type: "zine", x: 6900, y: 282, scoreValue: 900, spriteKey: "zine" },
-  { type: "game", x: 8060, y: 304, scoreValue: 300, spriteKey: "game" },
+  { type: "game", x: 8060, y: 304, width: 33, height: 33, scoreValue: 300, spriteKey: "game" },
   { type: "heart", x: 8800, y: 276, spriteKey: "heart", effect: "life" },
   { type: "mic", x: 9780, y: 286, scoreValue: 600, spriteKey: "mic" },
   { type: "heart", x: 10320, y: 250, spriteKey: "heart", effect: "life" },
   { type: "zine", x: 10940, y: 300, scoreValue: 900, spriteKey: "zine" },
-  { type: "game", x: 12100, y: 282, scoreValue: 600, spriteKey: "game" },
+  { type: "game", x: 12100, y: 282, width: 33, height: 33, scoreValue: 600, spriteKey: "game" },
   { type: "heart", x: 12660, y: 264, spriteKey: "heart", effect: "life" },
   { type: "mic", x: 13000, y: 286, scoreValue: 600, spriteKey: "mic" }
 ];

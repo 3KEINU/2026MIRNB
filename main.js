@@ -670,8 +670,8 @@ function updateItems() {
       return;
     }
 
-    const itemRect = getItemRect(item);
-    if (isOverlapping(getPlayerHitbox(), itemRect)) {
+    const itemHitbox = getItemHitbox(item);
+    if (isOverlapping(getPlayerHitbox(), itemHitbox)) {
       item.collected = true;
       item.pop = 18;
       if (item.effect === "life") {
@@ -918,11 +918,24 @@ function getObstacleHitbox(obstacle) {
 }
 
 function getItemRect(item) {
+  const width = item.width || cfg.itemSize;
+  const height = item.height || cfg.itemSize;
   return {
     x: worldToScreenX(item.x),
     y: item.y,
-    width: cfg.itemSize,
-    height: cfg.itemSize
+    width,
+    height
+  };
+}
+
+function getItemHitbox(item) {
+  const rect = getItemRect(item);
+  const hb = item.hitbox || { offsetX: 0, offsetY: 0, width: rect.width, height: rect.height };
+  return {
+    x: rect.x + hb.offsetX,
+    y: rect.y + hb.offsetY,
+    width: hb.width,
+    height: hb.height
   };
 }
 
@@ -955,7 +968,7 @@ function draw(time) {
 
   drawBackground(time);
   drawCourseProgress();
-  drawItems();
+  drawItems(time);
   drawObstacles();
   drawPlayer(time);
 }
@@ -1365,7 +1378,7 @@ function drawPlaceholderObstacle(rect, label) {
   ctx.fillText(label.toUpperCase(), rect.x + 4, rect.y + Math.max(13, rect.height / 2));
 }
 
-function drawItems() {
+function drawItems(time) {
   game.items.forEach((item) => {
     const rect = getItemRect(item);
     if (rect.x + rect.width < -20 || rect.x > cfg.canvasWidth + 40) return;
@@ -1381,7 +1394,7 @@ function drawItems() {
       return;
     }
 
-    const path = ASSET_MANIFEST.items[item.spriteKey];
+    const path = getItemImagePath(item, time);
     const image = path ? getImage(path) : null;
     if (image) {
       ctx.drawImage(image, rect.x, rect.y, rect.width, rect.height);
@@ -1389,6 +1402,13 @@ function drawItems() {
       drawPlaceholderItem(rect, item.type);
     }
   });
+}
+
+function getItemImagePath(item, time) {
+  const entry = ASSET_MANIFEST.items[item.spriteKey];
+  if (!Array.isArray(entry)) return entry;
+  const frame = Math.floor(time / 160) % entry.length;
+  return entry[frame];
 }
 
 function drawPlaceholderItem(rect, label) {
