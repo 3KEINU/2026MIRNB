@@ -11,4 +11,22 @@ FONT
 きゃぷてん
 いくえちゃん
 moca
-倒れてたおじいちゃんを一緒に助けてくれた競馬好きのイケてるおねえさん
+倒れてたおじいちゃんを一緒に助けてくれた
+競馬好きのイケてるおねえさん
+
+
+
+■ ESCAPE FROM THIRTIES
+A fan-made birthday game
+for Mirin Furukawa.
+
+UNOFFICIAL
+Made with love and respect.
+
+Please do not reuse or redistribute
+the assets included in this game.
+
+All third-party names, trademarks,
+and other rights belong to
+their respective owners.
+`;
