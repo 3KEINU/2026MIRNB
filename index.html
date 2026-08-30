@@ -31,7 +31,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260830-console-hints-slower">
+    <link rel="stylesheet" href="styles.css?v=20260831-console-call-smooth">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -72,6 +72,10 @@
             <div id="consoleDisplay" class="console-display">&gt; COMMAND?</div>
             <div class="console-hint-layer" aria-hidden="true">
               <span id="consoleHintText" class="console-hint-text"></span>
+            </div>
+            <div id="consoleCallLayer" class="console-call-layer" aria-hidden="true" hidden>
+              <img id="consoleCallMirin" class="console-call-image console-call-mirin" src="assets/ui/console_call_mirin_heart.png" alt="" aria-hidden="true">
+              <img id="consoleCallBdash" class="console-call-image console-call-bdash" src="assets/ui/console_call_bdash.png" alt="" aria-hidden="true">
             </div>
             <button data-console-input="UP" class="console-hit console-hit-up" type="button" aria-label="UP"></button>
             <button data-console-input="LEFT" class="console-hit console-hit-left" type="button" aria-label="LEFT"></button>
@@ -150,6 +154,6 @@
     <script src="course.js?v=20260829-item-game-33"></script>
     <script src="story.js?v=20260826-secret-story-1"></script>
     <script src="credits.js?v=20260821-credits-sama"></script>
-    <script src="main.js?v=20260830-console-hints-slower"></script>
+    <script src="main.js?v=20260831-console-call"></script>
   </body>
 </html>

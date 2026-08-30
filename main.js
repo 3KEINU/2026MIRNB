@@ -19,6 +19,9 @@ const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
 const resultItems = document.getElementById("resultItems");
 const consoleHintText = document.getElementById("consoleHintText");
+const consoleCallLayer = document.getElementById("consoleCallLayer");
+const consoleCallMirin = document.getElementById("consoleCallMirin");
+const consoleCallBdash = document.getElementById("consoleCallBdash");
 const startButton = document.getElementById("startButton");
 const secretStartButton = document.getElementById("secretStartButton");
 const normalModeButton = document.getElementById("normalModeButton");
@@ -81,6 +84,10 @@ const CONSOLE_HINTS = [
     ]
   }
 ];
+const CONSOLE_SUCCESS_TIMING = {
+  bdashDelay: 850,
+  finishDelay: 2050
+};
 
 const game = {
   mode: "title",
@@ -115,6 +122,7 @@ const game = {
 let consoleHistory = [];
 let consoleHintTimer = null;
 let consoleHintIndex = 0;
+let consoleSuccessTimers = [];
 let renderProgressOverride = null;
 
 storyBody.textContent = STORY_TEXT;
@@ -364,6 +372,7 @@ function isShowcaseCanvasMode() {
 
 function hideScreens() {
   stopConsoleHints();
+  stopConsoleSuccessSequence();
   titleScreen.hidden = true;
   consoleScreen.hidden = true;
   secretTitleScreen.hidden = true;
@@ -494,6 +503,55 @@ function showConsoleHint() {
 
   const nextDelay = 5000 + Math.random() * 2400;
   consoleHintTimer = window.setTimeout(showConsoleHint, nextDelay);
+}
+
+function queueConsoleSuccessStep(callback, delay) {
+  const timer = window.setTimeout(callback, delay);
+  consoleSuccessTimers.push(timer);
+}
+
+function stopConsoleSuccessSequence() {
+  consoleSuccessTimers.forEach((timer) => window.clearTimeout(timer));
+  consoleSuccessTimers = [];
+
+  if (consoleCallLayer) {
+    consoleCallLayer.classList.remove("is-active", "is-bdash");
+    consoleCallLayer.hidden = true;
+  }
+
+  if (consoleDisplay) {
+    consoleDisplay.hidden = false;
+  }
+}
+
+function startConsoleSuccessSequence() {
+  stopConsoleHints();
+  stopConsoleSuccessSequence();
+  consoleHistory = [];
+  game.mode = "consoleSuccess";
+
+  consoleDisplay.classList.remove("is-command-input");
+  consoleDisplay.textContent = "";
+  consoleDisplay.hidden = true;
+
+  if (!consoleCallLayer || !consoleCallMirin || !consoleCallBdash) {
+    queueConsoleSuccessStep(showSecretTitle, 650);
+    return;
+  }
+
+  consoleCallLayer.hidden = false;
+  void consoleCallLayer.offsetWidth;
+  consoleCallLayer.classList.add("is-active");
+
+  queueConsoleSuccessStep(() => {
+    if (game.mode !== "consoleSuccess" || !consoleCallLayer) return;
+    consoleCallLayer.classList.add("is-bdash");
+  }, CONSOLE_SUCCESS_TIMING.bdashDelay);
+
+  queueConsoleSuccessStep(() => {
+    if (game.mode !== "consoleSuccess") return;
+    showSecretTitle();
+  }, CONSOLE_SUCCESS_TIMING.finishDelay);
 }
 
 function showSecretTitle() {
@@ -862,10 +920,7 @@ function pressConsoleButton(value) {
   consoleDisplay.textContent = consoleHistory.map((inputValue) => SECRET_SYMBOLS[inputValue]).join("");
 
   if (consoleHistory.length === SECRET_COMMAND.length) {
-    consoleDisplay.classList.remove("is-command-input");
-    consoleDisplay.textContent = cfg.secretMode.title;
-    game.mode = "consoleSuccess";
-    window.setTimeout(showSecretTitle, 650);
+    startConsoleSuccessSequence();
   }
 }
 
