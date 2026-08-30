@@ -556,6 +556,81 @@ h1 {
   }
 }
 
+.console-call-layer {
+  position: absolute;
+  left: 12.7778%;
+  top: 8.4615%;
+  width: 74.1667%;
+  height: 35%;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+  background: #111c2c;
+}
+
+.console-call-layer[hidden] {
+  display: none;
+}
+
+.console-call-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
+  opacity: 0;
+}
+
+.console-call-mirin {
+  transform: translateX(-105%);
+}
+
+.console-call-bdash {
+  transform: translateX(105%);
+}
+
+.console-call-layer.is-active .console-call-mirin {
+  animation: console-call-slide-mirin 700ms cubic-bezier(0.18, 0.78, 0.24, 1) both;
+}
+
+.console-call-layer.is-bdash .console-call-bdash {
+  animation: console-call-slide-bdash 620ms cubic-bezier(0.18, 0.78, 0.24, 1) both;
+}
+
+@keyframes console-call-slide-mirin {
+  0% {
+    opacity: 0;
+    transform: translateX(-105%);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes console-call-slide-bdash {
+  0% {
+    opacity: 0;
+    transform: translateX(105%);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .console-hit {
   position: absolute;
   display: block;
