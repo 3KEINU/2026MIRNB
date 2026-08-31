@@ -711,39 +711,50 @@ h1 {
 
 .result-screen {
   justify-content: center;
-  padding: 18px;
+  padding: 18px 14px;
   background: rgba(16, 22, 44, 0.96);
 }
 
 .result-box {
+  width: 100%;
+  max-width: 320px;
+  min-width: 0;
   display: grid;
   gap: 18px;
   justify-items: center;
+  overflow: hidden;
 }
 
 .result-status {
-  font-size: clamp(2.2rem, 12vw, 3.4rem);
+  max-width: 100%;
+  font-size: clamp(1.75rem, 11vw, 3.4rem);
   font-weight: 800;
   color: #7cf7c1;
   text-align: center;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .result-birthday {
+  max-width: 100%;
   margin-top: -12px;
   color: #ffd7e5;
-  font-size: clamp(0.8rem, 3.6vw, 1rem);
+  font-size: clamp(0.68rem, 3.3vw, 1rem);
   letter-spacing: 0;
   text-align: center;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 dl {
-  width: min(100%, 320px);
+  width: 100%;
   margin: 0;
   display: grid;
   gap: 8px;
 }
 
 dl div {
+  min-width: 0;
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -754,10 +765,15 @@ dl div {
 }
 
 dt {
+  min-width: 0;
   color: #a8c6ff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 dd {
+  min-width: max-content;
   margin: 0;
   font-weight: 800;
 }
@@ -768,7 +784,7 @@ dd {
 }
 
 .result-hint {
-  width: min(100%, 320px);
+  width: 100%;
   margin: 0;
   color: rgba(219, 233, 255, 0.82);
   font-size: clamp(0.68rem, 3.1vw, 0.82rem);
@@ -778,6 +794,7 @@ dd {
 
 .result-actions {
   width: 100%;
+  min-width: 0;
   display: grid;
   gap: 12px;
   justify-items: center;
