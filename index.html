@@ -31,7 +31,7 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260831-console-call-smooth">
+    <link rel="stylesheet" href="styles.css?v=20260901-result-birthday-hint">
   </head>
   <body>
     <main class="app" aria-label="ESCAPE FROM THIRTIES MVP">
@@ -122,6 +122,7 @@
       <section id="resultScreen" class="screen result-screen" hidden>
         <div class="result-box">
           <p id="resultStatus" class="result-status">CLEAR</p>
+          <p id="resultBirthday" class="result-birthday" hidden>HAPPY BIRTHDAY, MIRIN!</p>
           <dl>
             <div>
               <dt>TOTAL SCORE</dt>
@@ -136,6 +137,7 @@
               <dd id="resultItems">0</dd>
             </div>
           </dl>
+          <p id="resultHint" class="result-hint" hidden>タイトルにある HIDDEN? は、しばらく待つとコマンドのヒントが見えるかも…？</p>
           <div class="result-actions">
             <button id="retryButton" class="primary-action" type="button">RETRY</button>
             <button id="titleButton" class="secondary-action" type="button">TITLE</button>
@@ -154,6 +156,6 @@
     <script src="course.js?v=20260829-item-game-33"></script>
     <script src="story.js?v=20260826-secret-story-1"></script>
     <script src="credits.js?v=20260821-credits-sama"></script>
-    <script src="main.js?v=20260901-secret-grid-center-band-soft"></script>
+    <script src="main.js?v=20260901-result-birthday-hint"></script>
   </body>
 </html>

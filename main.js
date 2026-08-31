@@ -15,9 +15,11 @@ const consoleDisplay = document.getElementById("consoleDisplay");
 const storyBody = document.getElementById("storyBody");
 const creditsBody = document.getElementById("creditsBody");
 const resultStatus = document.getElementById("resultStatus");
+const resultBirthday = document.getElementById("resultBirthday");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
 const resultItems = document.getElementById("resultItems");
+const resultHint = document.getElementById("resultHint");
 const consoleHintText = document.getElementById("consoleHintText");
 const consoleCallLayer = document.getElementById("consoleCallLayer");
 const consoleCallMirin = document.getElementById("consoleCallMirin");
@@ -122,6 +124,7 @@ const game = {
 let consoleHistory = [];
 let consoleHintTimer = null;
 let consoleHintIndex = 0;
+let consoleIncorrectTimer = null;
 let consoleSuccessTimers = [];
 let renderProgressOverride = null;
 
@@ -372,6 +375,7 @@ function isShowcaseCanvasMode() {
 
 function hideScreens() {
   stopConsoleHints();
+  clearConsoleIncorrectFeedback();
   stopConsoleSuccessSequence();
   titleScreen.hidden = true;
   consoleScreen.hidden = true;
@@ -458,6 +462,7 @@ function showConsole() {
   consoleHistory = [];
   setBoost(false);
   hideScreens();
+  clearConsoleIncorrectFeedback();
   consoleDisplay.classList.remove("is-command-input");
   consoleDisplay.textContent = "> COMMAND?";
   consoleScreen.hidden = false;
@@ -486,7 +491,7 @@ function stopConsoleHints() {
 }
 
 function showConsoleHint() {
-  if (!consoleHintText || game.mode !== "console" || consoleHistory.length > 0) {
+  if (!consoleHintText || game.mode !== "console") {
     consoleHintTimer = null;
     return;
   }
@@ -503,6 +508,28 @@ function showConsoleHint() {
 
   const nextDelay = 5000 + Math.random() * 2400;
   consoleHintTimer = window.setTimeout(showConsoleHint, nextDelay);
+}
+
+function clearConsoleIncorrectFeedback() {
+  if (consoleIncorrectTimer !== null) {
+    window.clearTimeout(consoleIncorrectTimer);
+    consoleIncorrectTimer = null;
+  }
+}
+
+function restoreConsolePromptAfterIncorrect() {
+  consoleIncorrectTimer = null;
+  if (game.mode !== "console" || consoleHistory.length > 0) return;
+
+  consoleDisplay.classList.remove("is-command-input");
+  consoleDisplay.textContent = "> COMMAND?";
+}
+
+function showConsoleIncorrectFeedback() {
+  clearConsoleIncorrectFeedback();
+  consoleDisplay.classList.remove("is-command-input");
+  consoleDisplay.textContent = "*incorrect*";
+  consoleIncorrectTimer = window.setTimeout(restoreConsolePromptAfterIncorrect, 850);
 }
 
 function queueConsoleSuccessStep(callback, delay) {
@@ -639,6 +666,7 @@ function startGoalExit() {
 
 function showResult(clear) {
   const settings = getModeSettings();
+  const isNormalClear = clear && game.playMode === "normal";
   game.mode = "result";
   setBoost(false);
   game.resultWasClear = clear;
@@ -648,11 +676,13 @@ function showResult(clear) {
     game.score += game.lifeBonus;
   }
 
-  resultStatus.textContent = clear ? (game.playMode === "secret" ? "B DASH CLEAR" : "ESCAPED") : "GAME OVER";
+  resultStatus.textContent = clear ? (game.playMode === "secret" ? "B DASH CLEAR" : "ESCAPED!") : "GAME OVER";
   resultStatus.style.color = clear ? "#7cf7c1" : "#ff8da8";
+  resultBirthday.hidden = !isNormalClear;
   resultScore.textContent = Math.floor(game.score).toString();
-  resultLife.textContent = game.life.toString();
+  resultLife.textContent = getRemainingLifeHearts(game.life);
   resultItems.textContent = game.itemsCollected.toString();
+  resultHint.hidden = !isNormalClear;
   titleButton.textContent = game.playMode === "secret" ? "SECRET TITLE" : "TITLE";
   hideScreens();
   resultScreen.hidden = false;
@@ -902,7 +932,7 @@ function playBgm(key, fallbackKey) {
 function pressConsoleButton(value) {
   if (game.mode !== "console") return;
 
-  stopConsoleHints();
+  clearConsoleIncorrectFeedback();
   consoleHistory.push(value);
   if (consoleHistory.length > SECRET_COMMAND.length) {
     consoleHistory.shift();
@@ -911,8 +941,7 @@ function pressConsoleButton(value) {
   const isPrefix = consoleHistory.every((inputValue, index) => inputValue === SECRET_COMMAND[index]);
   if (!isPrefix) {
     consoleHistory = [];
-    consoleDisplay.classList.remove("is-command-input");
-    consoleDisplay.textContent = "*incorrect*";
+    showConsoleIncorrectFeedback();
     return;
   }
 
@@ -998,6 +1027,10 @@ function getLifeHearts(life, maxLife) {
   const total = Math.max(1, maxLife);
   const current = clamp(life, 0, total);
   return "♥".repeat(current) + "♡".repeat(total - current);
+}
+
+function getRemainingLifeHearts(life) {
+  return "♥".repeat(Math.max(0, life));
 }
 
 function getPlayerHitbox() {
