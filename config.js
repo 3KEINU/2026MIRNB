@@ -84,8 +84,17 @@ const GAME_CONFIG = {
       playScrollFactor: 0.36,
       titleScrollFactor: 0.16,
       horizonY: 252,
-      verticalSpacing: 46,
-      horizontalLines: 12
+      verticalSpacing: 58,
+      horizontalLines: 12,
+      perspectiveExtendX: 560,
+      centerFade: {
+        enabled: true,
+        mode: "band",
+        yOffset: 0,
+        height: 78,
+        alpha: 1,
+        feather: 18
+      }
     }
   },
 
