@@ -1120,7 +1120,9 @@ function drawBackground(time) {
   const bg = getImage(bgPath) || getImage(fallbackPath);
   const ground = getImage(ASSET_MANIFEST.background.ground);
 
-  if (base) {
+  if (shouldDrawSecretDigitalBackground(settings)) {
+    drawSecretDigitalBackground(time, cfg.canvasHeight, false);
+  } else if (base) {
     ctx.drawImage(base, 0, 0, cfg.canvasWidth, cfg.canvasHeight);
   } else if (bg) {
     drawLoopingBackground(bg, cfg.background.scrollFactor);
@@ -1180,7 +1182,9 @@ function drawShowcaseBackground(time, height) {
   const bg = getImage(bgPath) || getImage(fallbackPath);
   const ground = getImage(ASSET_MANIFEST.background.ground);
 
-  if (base) {
+  if (shouldDrawSecretDigitalBackground(settings)) {
+    drawSecretDigitalBackground(time, height, true);
+  } else if (base) {
     ctx.drawImage(base, 0, 0, cfg.canvasWidth, height);
   } else if (bg) {
     ctx.drawImage(bg, 0, 0, cfg.canvasWidth, height);
@@ -1211,6 +1215,80 @@ function drawShowcaseBackground(time, height) {
     ctx.fillStyle = "#0b0f1d";
     ctx.fillRect(0, groundY + 8, cfg.canvasWidth, height - groundY - 8);
   }
+}
+
+function shouldDrawSecretDigitalBackground(settings) {
+  return settings.key === "secret"
+    && cfg.background.secretDigital
+    && cfg.background.secretDigital.enabled;
+}
+
+function drawSecretDigitalBackground(time, height, isShowcase) {
+  const digital = cfg.background.secretDigital;
+  const progress = getRenderProgress();
+  const alpha = isShowcase ? digital.titleAlpha : digital.playAlpha;
+  const scrollFactor = isShowcase ? digital.titleScrollFactor : digital.playScrollFactor;
+  const horizonY = Math.min(height - 90, digital.horizonY);
+  const bottomY = height;
+  const topY = 0;
+  const centerX = cfg.canvasWidth / 2;
+  const travel = progress * scrollFactor;
+
+  ctx.fillStyle = digital.baseColor;
+  ctx.fillRect(0, 0, cfg.canvasWidth, height);
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = digital.gridColor;
+  ctx.lineWidth = 1;
+
+  drawDigitalHorizontalGrid(horizonY, bottomY, digital.horizontalLines);
+  drawDigitalHorizontalGrid(horizonY, topY, Math.max(5, Math.floor(digital.horizontalLines * 0.55)));
+  drawDigitalPerspectiveGrid(centerX, horizonY, bottomY, travel, digital.verticalSpacing);
+  drawDigitalPerspectiveGrid(centerX, horizonY, topY, travel * 0.55, digital.verticalSpacing * 1.2);
+
+  ctx.globalAlpha = alpha * 0.45;
+  ctx.strokeStyle = digital.accentColor;
+  drawDigitalPerspectiveGrid(centerX + 42, horizonY, bottomY, travel * 0.8, digital.verticalSpacing * 1.65);
+
+  ctx.globalAlpha = alpha * 0.32;
+  ctx.fillStyle = digital.gridColor;
+  for (let y = 18 + ((time / 180) % 6); y < height; y += 22) {
+    ctx.fillRect(0, y, cfg.canvasWidth, 1);
+  }
+
+  ctx.restore();
+}
+
+function drawDigitalHorizontalGrid(horizonY, edgeY, count) {
+  const distance = edgeY - horizonY;
+  if (Math.abs(distance) < 1) return;
+
+  ctx.beginPath();
+  for (let index = 1; index <= count; index += 1) {
+    const ratio = index / count;
+    const y = horizonY + distance * ratio * ratio;
+    ctx.moveTo(0, y);
+    ctx.lineTo(cfg.canvasWidth, y);
+  }
+  ctx.stroke();
+}
+
+function drawDigitalPerspectiveGrid(centerX, horizonY, edgeY, travel, spacing) {
+  const offset = -positiveModulo(travel, spacing);
+  const start = -spacing * 2 + offset;
+
+  ctx.beginPath();
+  for (let x = start; x <= cfg.canvasWidth + spacing * 2; x += spacing) {
+    const horizonX = centerX + (x - centerX) * 0.08;
+    ctx.moveTo(horizonX, horizonY);
+    ctx.lineTo(x, edgeY);
+  }
+  ctx.stroke();
+}
+
+function positiveModulo(value, modulo) {
+  return ((value % modulo) + modulo) % modulo;
 }
 
 function drawIntroScene(time) {
