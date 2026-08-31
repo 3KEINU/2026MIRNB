@@ -1233,6 +1233,7 @@ function drawSecretDigitalBackground(time, height, isShowcase) {
   const topY = 0;
   const centerX = cfg.canvasWidth / 2;
   const travel = progress * scrollFactor;
+  const perspectiveExtendX = digital.perspectiveExtendX || 0;
 
   ctx.fillStyle = digital.baseColor;
   ctx.fillRect(0, 0, cfg.canvasWidth, height);
@@ -1244,18 +1245,20 @@ function drawSecretDigitalBackground(time, height, isShowcase) {
 
   drawDigitalHorizontalGrid(horizonY, bottomY, digital.horizontalLines);
   drawDigitalHorizontalGrid(horizonY, topY, Math.max(5, Math.floor(digital.horizontalLines * 0.55)));
-  drawDigitalPerspectiveGrid(centerX, horizonY, bottomY, travel, digital.verticalSpacing);
-  drawDigitalPerspectiveGrid(centerX, horizonY, topY, travel * 0.55, digital.verticalSpacing * 1.2);
+  drawDigitalPerspectiveGrid(centerX, horizonY, bottomY, travel, digital.verticalSpacing, perspectiveExtendX);
+  drawDigitalPerspectiveGrid(centerX, horizonY, topY, travel * 0.55, digital.verticalSpacing * 1.2, perspectiveExtendX);
 
   ctx.globalAlpha = alpha * 0.45;
   ctx.strokeStyle = digital.accentColor;
-  drawDigitalPerspectiveGrid(centerX + 42, horizonY, bottomY, travel * 0.8, digital.verticalSpacing * 1.65);
+  drawDigitalPerspectiveGrid(centerX + 42, horizonY, bottomY, travel * 0.8, digital.verticalSpacing * 1.65, perspectiveExtendX);
 
   ctx.globalAlpha = alpha * 0.32;
   ctx.fillStyle = digital.gridColor;
   for (let y = 18 + ((time / 180) % 6); y < height; y += 22) {
     ctx.fillRect(0, y, cfg.canvasWidth, 1);
   }
+
+  drawDigitalCenterFade(centerX, horizonY, digital.centerFade, digital.baseColor);
 
   ctx.restore();
 }
@@ -1274,17 +1277,68 @@ function drawDigitalHorizontalGrid(horizonY, edgeY, count) {
   ctx.stroke();
 }
 
-function drawDigitalPerspectiveGrid(centerX, horizonY, edgeY, travel, spacing) {
+function drawDigitalPerspectiveGrid(centerX, horizonY, edgeY, travel, spacing, extendX = 0) {
   const offset = -positiveModulo(travel, spacing);
-  const start = -spacing * 2 + offset;
+  const start = -spacing * 2 - extendX + offset;
 
   ctx.beginPath();
-  for (let x = start; x <= cfg.canvasWidth + spacing * 2; x += spacing) {
+  for (let x = start; x <= cfg.canvasWidth + spacing * 2 + extendX; x += spacing) {
     const horizonX = centerX + (x - centerX) * 0.08;
     ctx.moveTo(horizonX, horizonY);
     ctx.lineTo(x, edgeY);
   }
   ctx.stroke();
+}
+
+function drawDigitalCenterFade(centerX, horizonY, fade, baseColor) {
+  if (!fade || !fade.enabled) return;
+
+  const height = fade.height || 74;
+  const alpha = fade.alpha || 0.55;
+
+  ctx.save();
+  ctx.globalAlpha = 1;
+  if (fade.mode === "band") {
+    const y = horizonY + (fade.yOffset || 0) - (height / 2);
+    const feather = Math.max(0, Math.min(height / 2, fade.feather || 0));
+    if (feather > 0) {
+      const edgeStop = feather / height;
+      const gradient = ctx.createLinearGradient(0, y, 0, y + height);
+      gradient.addColorStop(0, colorWithAlpha(baseColor, 0));
+      gradient.addColorStop(edgeStop, colorWithAlpha(baseColor, alpha));
+      gradient.addColorStop(1 - edgeStop, colorWithAlpha(baseColor, alpha));
+      gradient.addColorStop(1, colorWithAlpha(baseColor, 0));
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = colorWithAlpha(baseColor, alpha);
+    }
+    ctx.fillRect(0, y, cfg.canvasWidth, height);
+    ctx.restore();
+    return;
+  }
+
+  const width = fade.width || 120;
+  ctx.translate(centerX, horizonY);
+  ctx.scale(width / 2, height / 2);
+  const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+  gradient.addColorStop(0, colorWithAlpha(baseColor, alpha));
+  gradient.addColorStop(0.6, colorWithAlpha(baseColor, alpha * 0.72));
+  gradient.addColorStop(1, colorWithAlpha(baseColor, 0));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(-1, -1, 2, 2);
+  ctx.restore();
+}
+
+function colorWithAlpha(hexColor, alpha) {
+  const hex = hexColor.replace("#", "");
+  if (hex.length !== 6) {
+    return `rgba(5, 7, 14, ${alpha})`;
+  }
+
+  const red = parseInt(hex.slice(0, 2), 16);
+  const green = parseInt(hex.slice(2, 4), 16);
+  const blue = parseInt(hex.slice(4, 6), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
 function positiveModulo(value, modulo) {
