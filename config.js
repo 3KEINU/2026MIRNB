@@ -73,6 +73,19 @@ const GAME_CONFIG = {
           tint: "#ff5cc8"
         }
       ]
+    },
+    secretDigital: {
+      enabled: true,
+      baseColor: "#05070e",
+      gridColor: "#ff2b6a",
+      accentColor: "#245cff",
+      playAlpha: 0.34,
+      titleAlpha: 0.2,
+      playScrollFactor: 0.36,
+      titleScrollFactor: 0.16,
+      horizonY: 252,
+      verticalSpacing: 46,
+      horizontalLines: 12
     }
   },
 
