@@ -94,7 +94,16 @@ const GAME_CONFIG = {
         height: 78,
         alpha: 1,
         feather: 18
-      }
+      },
+      parallaxLayers: [
+        {
+          assetKey: "secretParallaxMid",
+          playScrollFactor: 0.18,
+          titleScrollFactor: 0.08,
+          playAlpha: 1,
+          titleAlpha: 0.55
+        }
+      ]
     }
   },
 
