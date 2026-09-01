@@ -710,6 +710,7 @@ h1 {
 }
 
 .result-screen {
+  align-items: center;
   justify-content: center;
   padding: 18px 14px;
   background: rgba(16, 22, 44, 0.96);
@@ -733,6 +734,10 @@ h1 {
   text-align: center;
   line-height: 1;
   white-space: nowrap;
+}
+
+.result-status.is-long {
+  font-size: clamp(1.45rem, 8.6vw, 2.65rem);
 }
 
 .result-birthday {

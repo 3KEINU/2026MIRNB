@@ -677,6 +677,7 @@ function showResult(clear) {
   }
 
   resultStatus.textContent = clear ? (game.playMode === "secret" ? "B DASH CLEAR" : "ESCAPED!") : "GAME OVER";
+  resultStatus.classList.toggle("is-long", clear && game.playMode === "secret");
   resultStatus.style.color = clear ? "#7cf7c1" : "#ff8da8";
   resultBirthday.hidden = !isNormalClear;
   resultScore.textContent = Math.floor(game.score).toString();
@@ -1292,8 +1293,31 @@ function drawSecretDigitalBackground(time, height, isShowcase) {
   }
 
   drawDigitalCenterFade(centerX, horizonY, digital.centerFade, digital.baseColor);
+  drawSecretDigitalParallaxLayers(digital, height, isShowcase);
 
   ctx.restore();
+}
+
+function drawSecretDigitalParallaxLayers(digital, height, isShowcase) {
+  if (!digital.parallaxLayers || !digital.parallaxLayers.length) return;
+
+  digital.parallaxLayers.forEach((layer) => {
+    const imagePath = ASSET_MANIFEST.background[layer.assetKey];
+    const image = getImage(imagePath);
+    if (!image) return;
+
+    const scrollFactor = isShowcase
+      ? layer.titleScrollFactor
+      : layer.playScrollFactor;
+    const layerAlpha = isShowcase
+      ? layer.titleAlpha ?? layer.alpha ?? 1
+      : layer.playAlpha ?? layer.alpha ?? 1;
+
+    ctx.save();
+    ctx.globalAlpha = layerAlpha;
+    drawLoopingBackgroundLayer(image, height, scrollFactor || 0);
+    ctx.restore();
+  });
 }
 
 function drawDigitalHorizontalGrid(horizonY, edgeY, count) {
@@ -1564,12 +1588,16 @@ function drawLoopingBackground(bg, scrollFactor) {
     return;
   }
 
-  const scale = cfg.canvasHeight / bg.height;
+  drawLoopingBackgroundLayer(bg, cfg.canvasHeight, scrollFactor);
+}
+
+function drawLoopingBackgroundLayer(bg, height, scrollFactor) {
+  const scale = height / bg.height;
   const width = Math.max(1, bg.width * scale);
   const offset = -((getRenderProgress() * scrollFactor) % width);
 
   for (let x = offset; x < cfg.canvasWidth; x += width) {
-    ctx.drawImage(bg, x, 0, width, cfg.canvasHeight);
+    ctx.drawImage(bg, x, 0, width, height);
   }
 }
 
