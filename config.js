@@ -109,6 +109,7 @@ const GAME_CONFIG = {
 
   secretMode: {
     title: "みりんのハートにBダッシュ",
+    scoreMultiplier: 1.3,
     courseLength: 13500,
     baseSpeed: 420,
     boostSpeed: 736,

@@ -277,6 +277,7 @@ function getModeSettings(mode = game.playMode) {
     key: "normal",
     title: "ESCAPE FROM THIRTIES",
     courseLength: cfg.courseLength,
+    scoreMultiplier: 1,
     baseSpeed: cfg.baseSpeed,
     boostSpeed: cfg.boostSpeed,
     boostScoreMultiplier: cfg.boostScoreMultiplier,
@@ -677,7 +678,7 @@ function showResult(clear) {
   game.resultWasClear = clear;
 
   if (clear) {
-    game.lifeBonus = cfg.lifeBonus[game.life] || 0;
+    game.lifeBonus = (cfg.lifeBonus[game.life] || 0) * settings.scoreMultiplier;
     game.score += game.lifeBonus;
   }
 
@@ -795,8 +796,9 @@ function update(delta) {
   const advance = speed * delta;
 
   game.progress += advance;
-  game.runScore += advance * cfg.runScoreRate * scoreMultiplier;
-  game.score += advance * cfg.runScoreRate * scoreMultiplier;
+  const runGained = advance * cfg.runScoreRate * scoreMultiplier * settings.scoreMultiplier;
+  game.runScore += runGained;
+  game.score += runGained;
 
   updatePlayer(delta);
   updateItems();
@@ -860,7 +862,7 @@ function updateItems() {
 
       game.itemsCollected += 1;
       const multiplier = input.boostHeld && settings.itemScoreAffectedByBoost ? settings.boostScoreMultiplier : 1;
-      const gained = item.scoreValue * multiplier;
+      const gained = item.scoreValue * multiplier * settings.scoreMultiplier;
       game.itemScore += gained;
       game.score += gained;
       item.popText = `+${gained}`;
