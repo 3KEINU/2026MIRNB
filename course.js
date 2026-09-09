@@ -82,5 +82,5 @@ const SECRET_COURSE_ITEMS = [
   { type: "zine", x: 10940, y: 300, scoreValue: 900, spriteKey: "zine" },
   { type: "game", x: 12100, y: 282, width: 33, height: 33, scoreValue: 600, spriteKey: "game" },
   { type: "heart", x: 12660, y: 264, spriteKey: "heart", effect: "life" },
-  { type: "mic", x: 13000, y: 286, scoreValue: 600, spriteKey: "mic" }
+  { type: "mic", x: 13180, y: 286, scoreValue: 600, spriteKey: "mic" }
 ];
