@@ -737,7 +737,7 @@ h1 {
 }
 
 .result-status.is-long {
-  font-size: clamp(1.45rem, 8.6vw, 2.65rem);
+  font-size: clamp(1.15rem, 7.5vw, 2rem);
 }
 
 .result-reward {
@@ -749,6 +749,16 @@ h1 {
 
 .result-reward[hidden] {
   display: none;
+}
+
+.result-reward-message {
+  max-width: 100%;
+  margin: 0;
+  color: #ffd7e5;
+  font-size: clamp(0.75rem, 3.2vw, 0.88rem);
+  line-height: 1.6;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .result-screen.has-reward .result-box {

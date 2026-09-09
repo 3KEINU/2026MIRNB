@@ -16,6 +16,7 @@ const storyBody = document.getElementById("storyBody");
 const creditsBody = document.getElementById("creditsBody");
 const resultStatus = document.getElementById("resultStatus");
 const resultReward = document.getElementById("resultReward");
+const resultRewardMessage = document.getElementById("resultRewardMessage");
 const resultBirthday = document.getElementById("resultBirthday");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
@@ -680,7 +681,7 @@ function showResult(clear) {
     game.score += game.lifeBonus;
   }
 
-  resultStatus.textContent = clear ? (game.playMode === "secret" ? "B DASH CLEAR" : "ESCAPED!") : "GAME OVER";
+  resultStatus.textContent = clear ? (game.playMode === "secret" ? "Congratulations!" : "ESCAPED!") : "GAME OVER";
   resultStatus.classList.toggle("is-long", clear && game.playMode === "secret");
   resultStatus.style.color = clear ? "#7cf7c1" : "#ff8da8";
   resultBirthday.hidden = !isNormalClear;
@@ -693,6 +694,7 @@ function showResult(clear) {
   resultScreen.hidden = false;
   resultScreen.classList.toggle("has-reward", clear && game.playMode === "secret");
   resultReward.hidden = !(clear && game.playMode === "secret");
+  resultRewardMessage.hidden = resultReward.hidden;
   rewardAnimationStart = null;
   rewardFrameIndex = -1;
   resultReward.removeAttribute("src");
