@@ -740,6 +740,24 @@ h1 {
   font-size: clamp(1.45rem, 8.6vw, 2.65rem);
 }
 
+.result-reward {
+  display: block;
+  width: min(240px, 100%, calc(var(--app-height) * 0.3));
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.result-reward[hidden] {
+  display: none;
+}
+
+.result-screen.has-reward .result-box {
+  max-height: 100%;
+  gap: 12px;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
 .result-birthday {
   max-width: 100%;
   margin-top: -12px;

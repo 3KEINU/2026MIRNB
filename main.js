@@ -15,6 +15,7 @@ const consoleDisplay = document.getElementById("consoleDisplay");
 const storyBody = document.getElementById("storyBody");
 const creditsBody = document.getElementById("creditsBody");
 const resultStatus = document.getElementById("resultStatus");
+const resultReward = document.getElementById("resultReward");
 const resultBirthday = document.getElementById("resultBirthday");
 const resultScore = document.getElementById("resultScore");
 const resultLife = document.getElementById("resultLife");
@@ -127,6 +128,9 @@ let consoleHintIndex = 0;
 let consoleIncorrectTimer = null;
 let consoleSuccessTimers = [];
 let renderProgressOverride = null;
+const REWARD_FRAME_DURATION_MS = 1000 / 8;
+let rewardAnimationStart = null;
+let rewardFrameIndex = -1;
 
 storyBody.textContent = STORY_TEXT;
 creditsBody.textContent = CREDITS_TEXT;
@@ -687,9 +691,28 @@ function showResult(clear) {
   titleButton.textContent = game.playMode === "secret" ? "SECRET TITLE" : "TITLE";
   hideScreens();
   resultScreen.hidden = false;
+  resultScreen.classList.toggle("has-reward", clear && game.playMode === "secret");
+  resultReward.hidden = !(clear && game.playMode === "secret");
+  rewardAnimationStart = null;
+  rewardFrameIndex = -1;
+  resultReward.removeAttribute("src");
+  updateResultReward(performance.now());
   syncLayout();
   playBgm(settings.titleBgmKey, settings.bgmFallback.title);
   updateHud();
+}
+
+function updateResultReward(time) {
+  if (game.mode !== "result" || resultScreen.hidden || resultReward.hidden) return;
+
+  const frames = ASSET_MANIFEST.ui.secretClearReward;
+  // Wait for every frame so the first loop also plays without missing images.
+  if (!frames.every((path) => getImage(path))) return;
+  if (rewardAnimationStart === null) rewardAnimationStart = time;
+  const frameIndex = Math.floor((time - rewardAnimationStart) / REWARD_FRAME_DURATION_MS) % frames.length;
+  if (frameIndex === rewardFrameIndex) return;
+  resultReward.src = frames[frameIndex];
+  rewardFrameIndex = frameIndex;
 }
 
 function showResultTitle() {
@@ -716,6 +739,7 @@ function loop(time) {
   }
 
   draw(time);
+  updateResultReward(time);
   requestAnimationFrame(loop);
 }
 

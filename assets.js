@@ -62,6 +62,11 @@ const ASSET_MANIFEST = {
     }
   },
   ui: {
+    secretClearReward: [
+      "assets/ui/secret_clear_reward_0.png",
+      "assets/ui/secret_clear_reward_1.png",
+      "assets/ui/secret_clear_reward_2.png"
+    ],
     consoleBody: "assets/ui/console_body.png",
     consoleScreenMask: "assets/ui/console_screen_mask.png"
   }
