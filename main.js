@@ -1434,6 +1434,7 @@ function drawIntroScene(time) {
   withRenderProgress(game.backgroundOffset, () => {
     drawBackground(time);
   });
+  drawCourseProgress();
   drawPlayer(time);
 
   if (game.introTimer >= 0.85) {
@@ -1644,13 +1645,14 @@ function drawCourseProgress() {
   const barY = cfg.canvasHeight - 24;
   const barW = cfg.canvasWidth - 40;
   const ratio = Math.min(1, game.progress / settings.courseLength);
+  const ground = getImage(ASSET_MANIFEST.background.ground);
+  const panelY = Math.min(barY - 8, cfg.groundY + (ground ? ground.height : 8));
+  ctx.fillStyle = "#0b0f1d";
+  ctx.fillRect(0, panelY, cfg.canvasWidth, cfg.canvasHeight - panelY);
   ctx.fillStyle = "#1b2a4d";
   ctx.fillRect(barX, barY, barW, 8);
   ctx.fillStyle = "#7cf7c1";
   ctx.fillRect(barX, barY, barW * ratio, 8);
-  ctx.fillStyle = "#f7fbff";
-  ctx.font = `10px ${cfg.fontFamily}`;
-  ctx.fillText(settings.finishLabel, barX + barW - 48, barY - 4);
 }
 
 function drawPlayer(time) {

@@ -841,6 +841,9 @@ dd {
 }
 
 .control-button {
+  display: grid;
+  place-items: center;
+  padding: 8px;
   width: 100%;
   min-width: 0;
   height: 100%;
@@ -853,12 +856,27 @@ dd {
   touch-action: none;
 }
 
+.control-button-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.control-button-art image {
+  image-rendering: pixelated;
+}
+
 .control-button.jump {
   background: #2466c9;
   box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.2);
 }
 
 .control-button.boost {
+  padding: 6px;
   background: #d5335c;
   box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.2);
   font-size: clamp(0.78rem, 4vw, 1.04rem);

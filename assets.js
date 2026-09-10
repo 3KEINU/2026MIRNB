@@ -62,6 +62,8 @@ const ASSET_MANIFEST = {
     }
   },
   ui: {
+    buttonBdash: "assets/ui/button_bdash.png",
+    buttonJump: "assets/ui/button_jump.png",
     secretClearReward: [
       "assets/ui/secret_clear_reward_0.png",
       "assets/ui/secret_clear_reward_1.png",
