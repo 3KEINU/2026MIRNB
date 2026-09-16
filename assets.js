@@ -10,7 +10,16 @@ const ASSET_MANIFEST = {
     ],
     jumpUp: ["assets/player/jump_up.png"],
     jumpDown: ["assets/player/jump_down.png"],
-    damage: ["assets/player/jump_down.png"]
+    damage: ["assets/player/jump_down.png"],
+    secret: {
+      run: [
+        "assets/player/run_1_ura.png",
+        "assets/player/run_2_ura.png"
+      ],
+      jumpUp: ["assets/player/jump_up_ura.png"],
+      jumpDown: ["assets/player/jump_down_ura.png"],
+      damage: ["assets/player/jump_down_ura.png"]
+    }
   },
   obstacles: {
     crt: "assets/obstacles/crt.png",

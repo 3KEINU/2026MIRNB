@@ -1657,18 +1657,21 @@ function drawCourseProgress() {
 
 function drawPlayer(time) {
   const player = game.player;
+  const playerAssets = game.playMode === "secret"
+    ? ASSET_MANIFEST.player.secret
+    : ASSET_MANIFEST.player;
   const isDamaged = game.invincibleTimer > 0 || player.damageFlash > 0;
   if (isDamaged && Math.floor(time / 90) % 2 === 0) return;
 
   let path = null;
   if (isDamaged) {
-    path = ASSET_MANIFEST.player.damage[0];
+    path = playerAssets.damage[0];
   } else if (!player.grounded) {
-    path = player.vy < 0 ? ASSET_MANIFEST.player.jumpUp[0] : ASSET_MANIFEST.player.jumpDown[0];
+    path = player.vy < 0 ? playerAssets.jumpUp[0] : playerAssets.jumpDown[0];
   } else {
     const animationFps = input.boostHeld ? cfg.player.boostAnimationFps : cfg.player.animationFps;
-    const frame = Math.floor(time / (1000 / animationFps)) % ASSET_MANIFEST.player.run.length;
-    path = ASSET_MANIFEST.player.run[frame];
+    const frame = Math.floor(time / (1000 / animationFps)) % playerAssets.run.length;
+    path = playerAssets.run[frame];
   }
 
   const image = path ? getImage(path) : null;
