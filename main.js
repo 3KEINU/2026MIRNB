@@ -1206,6 +1206,7 @@ function drawBackground(time) {
   }
 
   drawParallaxWindows();
+  drawNormalForegroundParallax(settings);
 
   if (ground) {
     drawLoopingStrip(ground, cfg.groundY, ground.height, cfg.background.groundScrollFactor);
@@ -1215,6 +1216,21 @@ function drawBackground(time) {
     ctx.fillStyle = "#0b0f1d";
     ctx.fillRect(0, cfg.groundY + 8, cfg.canvasWidth, cfg.canvasHeight - cfg.groundY - 8);
   }
+}
+
+function drawNormalForegroundParallax(settings) {
+  const layer = cfg.background.normalParallaxFront;
+  if (settings.key !== "normal" || !layer || !layer.enabled) return;
+
+  const imagePath = ASSET_MANIFEST.background[layer.assetKey];
+  const image = getImage(imagePath);
+  if (!image) return;
+
+  ctx.save();
+  ctx.globalAlpha = layer.alpha ?? 1;
+  ctx.imageSmoothingEnabled = false;
+  drawLoopingBackgroundLayer(image, cfg.canvasHeight, layer.scrollFactor || 0, true);
+  ctx.restore();
 }
 
 function drawShowcaseScene(time) {
@@ -1620,10 +1636,11 @@ function drawLoopingBackground(bg, scrollFactor) {
   drawLoopingBackgroundLayer(bg, cfg.canvasHeight, scrollFactor);
 }
 
-function drawLoopingBackgroundLayer(bg, height, scrollFactor) {
+function drawLoopingBackgroundLayer(bg, height, scrollFactor, snapToPixel = false) {
   const scale = height / bg.height;
   const width = Math.max(1, bg.width * scale);
-  const offset = -((getRenderProgress() * scrollFactor) % width);
+  const rawOffset = (getRenderProgress() * scrollFactor) % width;
+  const offset = -(snapToPixel ? Math.round(rawOffset) : rawOffset);
 
   for (let x = offset; x < cfg.canvasWidth; x += width) {
     ctx.drawImage(bg, x, 0, width, height);

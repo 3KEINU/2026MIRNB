@@ -49,6 +49,12 @@ const GAME_CONFIG = {
     loop: true,
     scrollFactor: 0.35,
     groundScrollFactor: 1,
+    normalParallaxFront: {
+      enabled: true,
+      assetKey: "normalParallaxFront",
+      scrollFactor: 1.18,
+      alpha: 1
+    },
     windows: {
       enabled: true,
       scrollFactor: 0.72,

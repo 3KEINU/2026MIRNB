@@ -52,6 +52,7 @@ const ASSET_MANIFEST = {
       blue: "assets/background/window_frame_blue.png",
       pink: "assets/background/window_frame_pink.png"
     },
+    normalParallaxFront: "assets/background/normal_parallax_front.png",
     secretParallaxMid: "assets/background/secret_parallax_mid.png",
     normal: "assets/background/main.png",
     secret: "",
