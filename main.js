@@ -1229,6 +1229,7 @@ function drawNormalForegroundParallax(settings) {
   ctx.save();
   ctx.globalAlpha = layer.alpha ?? 1;
   ctx.imageSmoothingEnabled = false;
+  ctx.translate(0, layer.yOffset || 0);
   drawLoopingBackgroundLayer(image, cfg.canvasHeight, layer.scrollFactor || 0, true);
   ctx.restore();
 }

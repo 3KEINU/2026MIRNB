@@ -53,6 +53,7 @@ const GAME_CONFIG = {
       enabled: true,
       assetKey: "normalParallaxFront",
       scrollFactor: 1.18,
+      yOffset: -24,
       alpha: 1
     },
     windows: {
